@@ -1,25 +1,217 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Women’s Help – Vancouver</title>
   <style>
-    body{font-family: -apple-system, system-ui, Arial; margin:20px; line-height:1.4}
-    a.btn{display:block; padding:14px 16px; margin:10px 0; border:1px solid #ddd; border-radius:12px; text-decoration:none; color:#111}
-    small{color:#555}
+    :root { --bg:#f6f7f8; --card:#fff; --text:#111; --muted:#555; --stroke:#e6e6e6; }
+    body { margin:0; font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
+    header { padding:22px 18px 10px; max-width:900px; margin:0 auto; }
+    h1 { margin:0 0 8px; font-size:34px; letter-spacing:-0.4px; }
+    p { margin:0; color:var(--muted); line-height:1.35; }
+    .wrap { max-width:900px; margin:0 auto; padding:12px 12px 28px; }
+    .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:12px 6px 14px; }
+    .search {
+      flex: 1 1 240px;
+      background:#fff; border:1px solid var(--stroke);
+      border-radius:14px; padding:12px 14px; font-size:16px;
+    }
+    .pill {
+      background:#fff; border:1px solid var(--stroke);
+      border-radius:999px; padding:10px 12px; font-size:14px; color:var(--muted);
+    }
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media (min-width:720px){ .grid{ grid-template-columns: 1fr 1fr; } }
+    .card {
+      background:var(--card); border:1px solid var(--stroke); border-radius:18px;
+      padding:14px; box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    }
+    .name { font-size:18px; font-weight:700; margin:0 0 4px; }
+    .meta { font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
+    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    a.btn {
+      display:inline-block; text-decoration:none; color:#111;
+      background:#fff; border:1px solid var(--stroke);
+      padding:10px 12px; border-radius:14px; font-weight:600; font-size:14px;
+    }
+    a.btn.primary { background:#111; color:#fff; border-color:#111; }
+    .tagrow { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
+    .tag { font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid var(--stroke); color:var(--muted); background:#fafafa; }
+    footer { max-width:900px; margin:0 auto; padding:8px 18px 30px; color:var(--muted); font-size:13px; }
+    .small { font-size:12px; color:var(--muted); }
   </style>
 </head>
 <body>
-  <h1>Women’s Help – Vancouver</h1>
-  <p><small>Quick links and contacts.</small></p>
+  <header>
+    <h1>Women’s Help – Vancouver</h1>
+    <p>Quick contacts + directions. Tap “Directions” for Apple Maps (iPhone) or Google Maps.</p>
+  </header>
 
-  <a class="btn" href="tel:6046029463">SisterShelter – Call (604) 602-9463</a>
-  <a class="btn" href="tel:6042154115">Agape Street Ministry – Call (604) 215-4115</a>
-  <a class="btn" href="tel:6048396880">First United Shelter Intake 24h – Call (604) 839-6880</a>
-  <a class="btn" href="tel:6046946623">Belkin House (Women) 24h – Call (604) 694-6623</a>
-  <a class="btn" href="tel:6044283625">1660 Shelter Intake – Call (604) 428-3625</a>
-  <a class="btn" href="tel:6049829126">North Shore Shelter – Call (604) 982-9126</a>
-  <a class="btn" href="mailto:info@icwis.ca">ICWIS – Email info@icwis.ca</a>
+  <div class="wrap">
+    <div class="toolbar">
+      <input id="q" class="search" placeholder="Search (name, address, notes)…" autocomplete="off" />
+      <div class="pill" id="count"></div>
+    </div>
+
+    <div class="grid" id="list"></div>
+  </div>
+
+  <footer>
+    <div class="small">
+      Tip: In Safari → Share → <b>Add to Home Screen</b> to make this behave like an “app”.
+    </div>
+  </footer>
+
+<script>
+  // --- EDIT THIS LIST ANYTIME ---
+  const places = [
+    {
+      name: "SisterShelter (Atira)",
+      kind: "Shelter",
+      address: "131 Dunlevy Avenue, Vancouver, BC V6A 3A4",
+      phone: "604-602-9463",
+      email: "sistershelter@atira.bc.ca",
+      notes: "Low-barrier shelter (women). Open 6pm–9am daily. Meals/snacks. Pets accepted with restrictions."
+    },
+    {
+      name: "The Sisterhood (Atira)",
+      kind: "Shelter",
+      address: "342 Alexander Street, Vancouver, BC V6A 1C3",
+      phone: "",
+      email: "",
+      notes: "Low-barrier shelter for self-identified women. Open 24/7. Meals/snacks; storage available; wheelchair accessible."
+    },
+    {
+      name: "Agape Street Ministry",
+      kind: "Support / Outreach",
+      address: "Kateri House, 887 Keefer Street, Vancouver, BC V6J 1T4",
+      phone: "604-215-4115",
+      email: "info@agapestreetministry.org",
+      notes: "Street outreach support for women 19+ in the DTES."
+    },
+    {
+      name: "Beacon Hotel (PHS Community Services Society)",
+      kind: "Housing (SRO) / Support",
+      address: "7 West Hastings Street, Vancouver, BC V6B 1G4",
+      phone: "604-683-0073",
+      email: "info@phs.ca",
+      notes: "Single room occupancy (SRO) social housing; tenant supports."
+    },
+    {
+      name: "First United Shelter Program (Safe Shelter)",
+      kind: "Shelter",
+      address: "467 Alexander Street, Vancouver, BC V6A 1C6",
+      phone: "604-839-6880",
+      email: "",
+      notes: "Year-round, low-barrier, 24-hour emergency shelter (adults 19+). Intake 24h."
+    },
+    {
+      name: "Belkin House Emergency Shelter for Women (Salvation Army)",
+      kind: "Shelter",
+      address: "555 Homer Street, Vancouver, BC V6B 1K8",
+      phone: "604-694-6623",
+      email: "belkinhouse.womenshelter@salvationarmy.ca",
+      notes: "Women 19+. 24-hour line and front desk available."
+    },
+    {
+      name: "Anchor of Hope Temporary Shelter (Salvation Army)",
+      kind: "Shelter (Seasonal)",
+      address: "119 East Cordova Street, Vancouver, BC V6A 1K8",
+      phone: "604-833-2142",
+      email: "vancouverhl.anchor@salvationarmy.ca",
+      notes: "Seasonal overnight mats (separate area for women). No alcohol/drugs on site."
+    },
+    {
+      name: "1660 Shelter (VAFCS)",
+      kind: "Shelter",
+      address: "1660 East Hastings Street, Vancouver, BC V5L 1S6",
+      phone: "604-428-3625",
+      email: "shelter@vafcs.org",
+      notes: "Year-round, low-barrier, 24-hour emergency housing. Intake line listed."
+    },
+    {
+      name: "Powell Place (The Bloom Group)",
+      kind: "Shelter",
+      address: "329 Powell Street, Vancouver, BC V6A 1G5",
+      phone: "604-606-0403",
+      email: "powellplace@thebloomgroup.org",
+      notes: "24-hour intake listed."
+    },
+    {
+      name: "Bridge Shelter Support (Atira)",
+      kind: "Support",
+      address: "100 East Cordova Street, Vancouver, BC V6A 1K9",
+      phone: "604-684-3542",
+      email: "bridgesheltersupport@atira.bc.ca",
+      notes: "Support line/office contact listed."
+    },
+    {
+      name: "Inner City Women’s Initiatives Society (ICWIS)",
+      kind: "Support / Programs",
+      address: "101 East Cordova Street, Vancouver, BC V6A 1K7",
+      phone: "604-687-5454",
+      email: "info@icwis.ca",
+      notes: "Support programs; workshops; groups; harm reduction support."
+    },
+    {
+      name: "North Shore Housing Centre – Shelter (Lookout Society)",
+      kind: "Shelter",
+      address: "705 West 2nd Street, North Vancouver, BC V7M 1E6",
+      phone: "604-982-9126",
+      email: "nsshelter@lookoutsociety.ca",
+      notes: "Short-term shelter; call first or referral may be required."
+    }
+  ];
+
+  const $list = document.getElementById("list");
+  const $q = document.getElementById("q");
+  const $count = document.getElementById("count");
+
+  const enc = (s) => encodeURIComponent(s || "");
+  const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
+  const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
+  const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
+
+  function card(p){
+    const tel = p.phone ? `tel:${fmtPhone(p.phone)}` : "";
+    const mail = p.email ? `mailto:${p.email}` : "";
+    const dirApple = p.address ? appleMaps(p.address) : "";
+    const dirGoogle = p.address ? googleMaps(p.address) : "";
+
+    const tags = [p.kind].filter(Boolean).map(t => `<span class="tag">${t}</span>`).join("");
+
+    return `
+      <div class="card">
+        <div class="name">${p.name}</div>
+        <div class="meta">
+          ${p.address ? `<div><b>Address:</b> ${p.address}</div>` : ""}
+          ${p.notes ? `<div style="margin-top:6px;">${p.notes}</div>` : ""}
+        </div>
+        <div class="tagrow">${tags}</div>
+        <div class="btns">
+          ${p.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
+          ${p.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
+          ${p.address ? `<a class="btn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
+          ${p.address ? `<a class="btn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
+        </div>
+      </div>
+    `;
+  }
+
+  function render(){
+    const query = ($q.value || "").toLowerCase().trim();
+    const filtered = places.filter(p => {
+      const blob = `${p.name} ${p.kind} ${p.address} ${p.phone} ${p.email} ${p.notes}`.toLowerCase();
+      return blob.includes(query);
+    });
+
+    $list.innerHTML = filtered.map(card).join("");
+    $count.textContent = `${filtered.length} listed`;
+  }
+
+  $q.addEventListener("input", render);
+  render();
+</script>
 </body>
 </html>
