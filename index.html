@@ -2,30 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <title>Women’s Help – Vancouver</title>
-  <meta name="description" content="Quick contacts, shelters, and support services for women in Vancouver. Search, call, email, and get directions. Works offline once loaded." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Women’s Help — Vancouver</title>
+  <meta name="description" content="Quick contacts + directions for women’s shelters and supports in/near Vancouver. Works offline after first open." />
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Women’s Help">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Women’s Help">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
 
-  <!-- Basic social preview (optional but nice) -->
-  <meta property="og:title" content="Women’s Help – Vancouver">
-  <meta property="og:description" content="Quick contacts + directions. Search shelters and support services. Works offline once loaded.">
-  <meta property="og:type" content="website">
+  <!-- Icons (your repo has these in ROOT) -->
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" href="./icon-192.png">
 
   <style>
     :root{
       --bg:#f6f7f8;
-      --card:#ffffff;
-      --text:#111111;
-      --muted:#555555;
-      --stroke:#e6e6e6;
+      --card:#fff;
+      --text:#101114;
+      --muted:#5b5f66;
+      --stroke:#e6e6e8;
       --shadow: 0 1px 0 rgba(0,0,0,0.02);
       --radius:18px;
       --radius2:14px;
@@ -34,37 +34,52 @@
     *{ box-sizing:border-box; }
     body{
       margin:0;
-      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
     }
+    a{ color:inherit; }
     header{
-      padding:22px 18px 10px;
       max-width:var(--max);
       margin:0 auto;
+      padding:24px 16px 8px;
     }
     h1{
       margin:0 0 8px;
       font-size:34px;
-      letter-spacing:-0.4px;
+      letter-spacing:-0.5px;
       line-height:1.05;
     }
-    p{ margin:0; color:var(--muted); line-height:1.35; }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      line-height:1.35;
+      font-size:15px;
+    }
 
     .wrap{
       max-width:var(--max);
       margin:0 auto;
-      padding:12px 12px 28px;
+      padding:10px 12px 26px;
     }
 
+    /* Sticky toolbar */
+    .sticky{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:linear-gradient(to bottom, rgba(246,247,248,0.98), rgba(246,247,248,0.92));
+      backdrop-filter:saturate(180%) blur(10px);
+      padding:10px 6px 10px;
+      border-bottom:1px solid rgba(0,0,0,0.04);
+      margin:0 0 10px;
+    }
     .toolbar{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
-      margin:12px 6px 14px;
       align-items:center;
     }
-
     .search{
       flex: 1 1 260px;
       background:#fff;
@@ -74,41 +89,69 @@
       font-size:16px;
       outline:none;
     }
-
-    .pill{
-      background:#fff;
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      padding:10px 12px;
-      font-size:14px;
-      color:var(--muted);
-      white-space:nowrap;
-    }
-
-    .btnSmall{
-      appearance:none;
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:11px 12px;
+      border-radius:var(--radius2);
       border:1px solid var(--stroke);
       background:#fff;
-      border-radius:999px;
-      padding:10px 12px;
+      font-weight:650;
       font-size:14px;
-      font-weight:600;
-      color:var(--text);
       cursor:pointer;
-      white-space:nowrap;
+      user-select:none;
+      text-decoration:none;
     }
-    .btnSmall.primary{
+    .btn.primary{
       background:#111;
       border-color:#111;
       color:#fff;
+    }
+    .btn:disabled{
+      opacity:0.55;
+      cursor:not-allowed;
+    }
+    .pill{
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background:#fff;
+      color:var(--muted);
+      font-size:14px;
+      white-space:nowrap;
+    }
+
+    .filters{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:10px 0 0;
+    }
+    .chip{
+      border:1px solid var(--stroke);
+      background:#fff;
+      color:var(--muted);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip.active{
+      border-color:#111;
+      color:#111;
+      box-shadow:0 0 0 1px #111 inset;
     }
 
     .grid{
       display:grid;
       grid-template-columns: 1fr;
       gap:12px;
+      padding:0 6px;
     }
-    @media (min-width:720px){
+    @media (min-width:760px){
       .grid{ grid-template-columns: 1fr 1fr; }
     }
 
@@ -119,18 +162,25 @@
       padding:14px;
       box-shadow:var(--shadow);
     }
-
-    .row{
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:flex-start;
+    .name{
+      margin:0 0 6px;
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:-0.2px;
+      line-height:1.15;
     }
-
-    .name{ font-size:18px; font-weight:800; margin:0 0 4px; }
-    .meta{ font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
-
-    .tagrow{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
+    .meta{
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.4;
+    }
+    .meta b{ color:#2b2f35; }
+    .tagrow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
     .tag{
       font-size:12px;
       padding:6px 8px;
@@ -140,403 +190,256 @@
       background:#fafafa;
     }
 
-    .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-    a.btn{
-      display:inline-block;
-      text-decoration:none;
-      color:#111;
-      background:#fff;
-      border:1px solid var(--stroke);
-      padding:10px 12px;
-      border-radius:var(--radius2);
-      font-weight:700;
-      font-size:14px;
-    }
-    a.btn.primary{
-      background:#111;
-      color:#fff;
-      border-color:#111;
-    }
-
-    .mutedLine{
-      font-size:12px;
-      color:var(--muted);
-      margin:6px 6px 0;
+    .btnrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
     }
 
     footer{
       max-width:var(--max);
       margin:0 auto;
-      padding:8px 18px 30px;
+      padding:10px 16px 30px;
       color:var(--muted);
       font-size:13px;
     }
+    .tiny{ font-size:12px; color:var(--muted); line-height:1.35; }
 
-    /* Install / offline banners */
-    #installBar{ display:none; margin: 0 6px 12px; }
-    #iosTip{ display:none; margin: 0 6px 12px; }
-    #offlineBar{ display:none; margin: 0 6px 12px; }
-    .bannerTitle{ font-weight:800; margin:0 0 6px; }
+    .toast{
+      position:fixed;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:18px;
+      background:#111;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity 180ms ease;
+    }
+    .toast.show{ opacity:0.92; }
   </style>
 </head>
 
 <body>
   <header>
-    <h1>Women’s Help – Vancouver</h1>
-    <p>Quick contacts + directions. Search by name, address, or notes. Works offline once opened.</p>
+    <h1>Women’s Help — Vancouver</h1>
+    <p class="sub">Quick contacts + directions. Works offline after first open.</p>
   </header>
 
   <div class="wrap">
-    <!-- Offline banner -->
-    <div id="offlineBar" class="card">
-      <div class="bannerTitle">You’re offline</div>
-      <div class="meta" style="margin:0;">
-        Search and contacts still work. Directions may require a connection.
+    <div class="sticky">
+      <div class="toolbar">
+        <input id="q" class="search" placeholder="Search (name, address, notes)..." autocomplete="off" />
+        <button id="near" class="btn" type="button">Near me</button>
+        <div id="count" class="pill">—</div>
       </div>
+      <div id="filters" class="filters"></div>
     </div>
 
-    <!-- Install banner (Android/Chrome) -->
-    <div id="installBar" class="card">
-      <div class="bannerTitle">Install this as an app</div>
-      <div class="meta" style="margin-bottom:10px;">
-        Adds an icon to your home screen and opens full-screen.
-      </div>
-      <div class="btns">
-        <button id="installBtn" class="btnSmall primary" type="button">Install</button>
-        <button id="dismissInstall" class="btnSmall" type="button">Not now</button>
-      </div>
-    </div>
-
-    <!-- iOS tip -->
-    <div id="iosTip" class="mutedLine">
-      iPhone: Share → <b>Add to Home Screen</b> to install.
-    </div>
-
-    <div class="toolbar">
-      <input id="q" class="search" placeholder="Search (name, address, notes)…" autocomplete="off" />
-      <button id="nearMe" class="btnSmall" type="button">Near me</button>
-      <button id="resetSort" class="btnSmall" type="button" style="display:none;">Reset</button>
-      <div class="pill" id="count">0 listed</div>
-    </div>
-
-    <div class="grid" id="list"></div>
+    <div id="list" class="grid"></div>
   </div>
 
   <footer>
-    <div class="mutedLine">
-      Emergency: call 911. This page is an information list, not a guarantee of space/availability.
+    <div class="tiny">
+      Tip (iPhone): Safari → Share → <b>Add to Home Screen</b> to make it behave like an app.<br>
+      If something looks wrong after updates: hard refresh (Ctrl+Shift+R) or clear site data.
     </div>
   </footer>
 
-<script>
-  // -----------------------------
-  // DATA (edit anytime)
-  // Tip: Add lat/lng later for best "Near me" accuracy.
-  // -----------------------------
-  const places = [
-    {
-      name: "SisterShelter (Atira)",
-      kind: "Shelter",
-      address: "131 Dunlevy Avenue, Vancouver, BC V6A 3A4",
-      phone: "604-602-9463",
-      email: "sistershelter@atira.bc.ca",
-      notes: "Low-barrier shelter (women). Open 6pm–9am daily. Meals/snacks. Pets accepted with restrictions."
-    },
-    {
-      name: "The Sisterhood (Atira)",
-      kind: "Shelter",
-      address: "342 Alexander Street, Vancouver, BC V6A 1C3",
-      phone: "",
-      email: "",
-      notes: "Low-barrier shelter for self-identified women. Open 24/7. Meals/snacks; storage available; wheelchair accessible."
-    },
-    {
-      name: "Agape Street Ministry",
-      kind: "Support / Outreach",
-      address: "Kateri House, 887 Keefer Street, Vancouver, BC V6J 1T4",
-      phone: "604-215-4115",
-      email: "info@agapestreetministry.org",
-      notes: "Street outreach support for women 19+ in the DTES."
-    },
-    {
-      name: "Beacon Hotel (PHS Community Services Society)",
-      kind: "Housing (SRO) / Support",
-      address: "7 West Hastings Street, Vancouver, BC V6B 1G4",
-      phone: "604-683-0073",
-      email: "info@phs.ca",
-      notes: "Single room occupancy (SRO) social housing; tenant supports."
-    },
-    {
-      name: "First United Shelter Program (Safe Shelter)",
-      kind: "Shelter",
-      address: "467 Alexander Street, Vancouver, BC V6A 1C6",
-      phone: "604-839-6880",
-      email: "",
-      notes: "Year-round, low-barrier, 24-hour emergency shelter (adults 19+). Intake 24h."
-    },
-    {
-      name: "Belkin House Emergency Shelter for Women (Salvation Army)",
-      kind: "Shelter",
-      address: "555 Homer Street, Vancouver, BC V6B 1K8",
-      phone: "604-694-6623",
-      email: "belkinhouse.womenshelter@salvationarmy.ca",
-      notes: "Women 19+. 24-hour line and front desk available."
-    },
-    {
-      name: "Anchor of Hope Temporary Shelter (Salvation Army)",
-      kind: "Shelter (Seasonal)",
-      address: "119 East Cordova Street, Vancouver, BC V6A 1K8",
-      phone: "604-833-2142",
-      email: "vancouverhl.anchor@salvationarmy.ca",
-      notes: "Seasonal overnight mats (separate area for women). No alcohol/drugs on site."
-    },
-    {
-      name: "1660 Shelter (VAFCS)",
-      kind: "Shelter",
-      address: "1660 East Hastings Street, Vancouver, BC V5L 1S6",
-      phone: "604-428-3625",
-      email: "shelter@vafcs.org",
-      notes: "Year-round, low-barrier, 24-hour emergency housing. Intake line listed."
-    },
-    {
-      name: "Powell Place (The Bloom Group)",
-      kind: "Shelter",
-      address: "329 Powell Street, Vancouver, BC V6A 1G5",
-      phone: "604-606-0403",
-      email: "powellplace@thebloomgroup.org",
-      notes: "24-hour intake listed."
-    },
-    {
-      name: "Bridge Shelter Support (Atira)",
-      kind: "Support",
-      address: "100 East Cordova Street, Vancouver, BC V6A 1K9",
-      phone: "604-684-3542",
-      email: "bridgesheltersupport@atira.bc.ca",
-      notes: "Support line/office contact listed."
-    },
-    {
-      name: "Inner City Women’s Initiatives Society (ICWIS)",
-      kind: "Support / Programs",
-      address: "101 East Cordova Street, Vancouver, BC V6A 1K7",
-      phone: "604-687-5454",
-      email: "info@icwis.ca",
-      notes: "Support programs; workshops; groups; harm reduction support."
-    },
-    {
-      name: "North Shore Housing Centre – Shelter (Lookout Society)",
-      kind: "Shelter",
-      address: "705 West 2nd Street, North Vancouver, BC V7M 1E6",
-      phone: "604-982-9126",
-      email: "nsshelter@lookoutsociety.ca",
-      notes: "Short-term shelter; call first or referral may be required."
+  <div id="toast" class="toast"></div>
+
+  <!-- Your data file -->
+  <script src="./shelters.js"></script>
+
+  <script>
+    // Register service worker (PWA offline)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
     }
-  ];
 
-  // -----------------------------
-  // HELPERS
-  // -----------------------------
-  const $list = document.getElementById("list");
-  const $q = document.getElementById("q");
-  const $count = document.getElementById("count");
-  const $nearMe = document.getElementById("nearMe");
-  const $resetSort = document.getElementById("resetSort");
+    const $list = document.getElementById("list");
+    const $q = document.getElementById("q");
+    const $count = document.getElementById("count");
+    const $near = document.getElementById("near");
+    const $filters = document.getElementById("filters");
+    const $toast = document.getElementById("toast");
 
-  const enc = (s) => encodeURIComponent(s || "");
-  const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
-  const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
-  const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
+    // Try to support whatever your shelters.js exposes
+    // (examples: window.places, window.PLACES, window.SHELTERS)
+    const DATA =
+      (window.places && Array.isArray(window.places) && window.places) ||
+      (window.PLACES && Array.isArray(window.PLACES) && window.PLACES) ||
+      (window.SHELTERS && Array.isArray(window.SHELTERS) && window.SHELTERS) ||
+      [];
 
-  const originalOrder = places.map((p, i) => ({ ...p, __i: i }));
-  let working = originalOrder.slice();
-  let lastCoords = null;
+    // Normalize records so the UI is consistent
+    const places = DATA.map(p => ({
+      name: p.name || "",
+      kind: p.kind || p.type || "",
+      address: p.address || "",
+      phone: p.phone || "",
+      email: p.email || "",
+      notes: p.notes || p.description || "",
+      lat: typeof p.lat === "number" ? p.lat : null,
+      lon: typeof p.lon === "number" ? p.lon : null,
+      distKm: null
+    }));
 
-  function isIOS(){
-    return /iphone|ipad|ipod/i.test(navigator.userAgent);
-  }
+    function toast(msg){
+      $toast.textContent = msg;
+      $toast.classList.add("show");
+      setTimeout(() => $toast.classList.remove("show"), 2200);
+    }
 
-  function metersToKm(m){
-    const km = m / 1000;
-    if (km < 1) return `${Math.round(km * 10) / 10} km`;
-    return `${Math.round(km * 10) / 10} km`;
-  }
+    const enc = (s) => encodeURIComponent(s || "");
+    const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
+    const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
+    const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
 
-  // Haversine distance (meters)
-  function haversine(lat1, lon1, lat2, lon2){
-    const R = 6371000;
-    const toRad = (x) => x * Math.PI / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    return R * c;
-  }
+    // Simple distance calc (Haversine)
+    function havKm(lat1, lon1, lat2, lon2){
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI/180;
+      const dLon = (lon2 - lon1) * Math.PI/180;
+      const a =
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
 
-  // Optional: if you later add p.lat / p.lng, distances will show.
-  function distanceLabel(p){
-    if (!lastCoords || typeof p.lat !== "number" || typeof p.lng !== "number") return "";
-    const m = haversine(lastCoords.lat, lastCoords.lng, p.lat, p.lng);
-    return metersToKm(m);
-  }
+    let activeKind = "All";
+    let sortByNearest = false;
 
-  function card(p){
-    const tel = p.phone ? `tel:${fmtPhone(p.phone)}` : "";
-    const mail = p.email ? `mailto:${p.email}` : "";
-    const dirApple = p.address ? appleMaps(p.address) : "";
-    const dirGoogle = p.address ? googleMaps(p.address) : "";
+    function buildFilters(){
+      const kinds = ["All", ...Array.from(new Set(places.map(p => p.kind).filter(Boolean))).sort()];
+      $filters.innerHTML = kinds.map(k => `
+        <div class="chip ${k === activeKind ? "active" : ""}" data-kind="${k}">
+          ${k}
+        </div>
+      `).join("");
 
-    const tags = [p.kind].filter(Boolean).map(t => `<span class="tag">${t}</span>`).join("");
-    const dist = distanceLabel(p);
+      $filters.querySelectorAll(".chip").forEach(ch => {
+        ch.addEventListener("click", () => {
+          activeKind = ch.dataset.kind || "All";
+          sortByNearest = false; // reset sort unless user taps Near me again
+          render();
+          buildFilters();
+        });
+      });
+    }
 
-    return `
-      <div class="card">
-        <div class="row">
-          <div>
-            <div class="name">${p.name}</div>
+    function card(p){
+      const tel = p.phone ? `tel:${fmtPhone(p.phone)}` : "";
+      const mail = p.email ? `mailto:${p.email}` : "";
+      const dirApple = p.address ? appleMaps(p.address) : "";
+      const dirGoogle = p.address ? googleMaps(p.address) : "";
+
+      const tags = [
+        p.kind ? `<span class="tag">${p.kind}</span>` : "",
+        (typeof p.distKm === "number") ? `<span class="tag">${p.distKm.toFixed(p.distKm < 10 ? 1 : 0)} km</span>` : ""
+      ].filter(Boolean).join("");
+
+      return `
+        <div class="card">
+          <div class="name">${p.name || "Unknown"}</div>
+          <div class="meta">
+            ${p.address ? `<div><b>Address:</b> ${p.address}</div>` : ""}
+            ${p.notes ? `<div style="margin-top:6px;">${p.notes}</div>` : ""}
           </div>
-          ${dist ? `<div class="tag" title="Approx distance">${dist}</div>` : ``}
+
+          ${tags ? `<div class="tagrow">${tags}</div>` : ""}
+
+          <div class="btnrow">
+            ${p.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
+            ${p.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
+            ${p.address ? `<a class="btn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
+            ${p.address ? `<a class="btn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
+          </div>
         </div>
+      `;
+    }
 
-        <div class="meta">
-          ${p.address ? `<div><b>Address:</b> ${p.address}</div>` : ""}
-          ${p.notes ? `<div style="margin-top:6px;">${p.notes}</div>` : ""}
-        </div>
-
-        <div class="tagrow">${tags}</div>
-
-        <div class="btns">
-          ${p.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
-          ${p.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
-          ${p.address ? `<a class="btn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
-          ${p.address ? `<a class="btn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
-        </div>
-      </div>
-    `;
-  }
-
-  function filterList(items){
-    const query = ($q.value || "").toLowerCase().trim();
-    if (!query) return items;
-    return items.filter(p => {
+    function matchesQuery(p, query){
+      if (!query) return true;
       const blob = `${p.name} ${p.kind} ${p.address} ${p.phone} ${p.email} ${p.notes}`.toLowerCase();
       return blob.includes(query);
-    });
-  }
-
-  function render(){
-    const filtered = filterList(working);
-    $list.innerHTML = filtered.map(card).join("");
-    $count.textContent = `${filtered.length} listed`;
-  }
-
-  $q.addEventListener("input", render);
-
-  // -----------------------------
-  // Near Me (works best if places have lat/lng)
-  // Without lat/lng, we still request location but can't sort accurately.
-  // -----------------------------
-  $nearMe.addEventListener("click", () => {
-    if (!("geolocation" in navigator)) {
-      alert("Location is not available on this device/browser.");
-      return;
     }
 
-    $nearMe.disabled = true;
-    $nearMe.textContent = "Locating…";
+    function render(){
+      const query = ($q.value || "").toLowerCase().trim();
+      let items = places.filter(p => (activeKind === "All" ? true : p.kind === activeKind))
+                        .filter(p => matchesQuery(p, query));
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        lastCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-
-        const hasCoords = working.some(p => typeof p.lat === "number" && typeof p.lng === "number");
-        if (hasCoords) {
-          working = working
-            .slice()
-            .sort((a, b) => (haversine(lastCoords.lat, lastCoords.lng, a.lat, a.lng) - haversine(lastCoords.lat, lastCoords.lng, b.lat, b.lng)));
-          $resetSort.style.display = "inline-block";
-        } else {
-          alert("Near me is ready, but this list doesn’t have coordinates yet. If you want, we can add lat/lng to each place so it can sort by distance.");
+      if (sortByNearest) {
+        // Only sort if we have distances calculated
+        const hasAny = items.some(p => typeof p.distKm === "number");
+        if (hasAny) {
+          items = items.slice().sort((a,b) => (a.distKm ?? 1e9) - (b.distKm ?? 1e9));
         }
+      }
 
-        $nearMe.disabled = false;
-        $nearMe.textContent = "Near me";
-        render();
-      },
-      (err) => {
-        $nearMe.disabled = false;
-        $nearMe.textContent = "Near me";
-        alert("Couldn’t get location. You may need to allow location permissions for this site.");
-      },
-      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
-    );
-  });
+      $list.innerHTML = items.map(card).join("");
+      $count.textContent = `${items.length} listed`;
+    }
 
-  $resetSort.addEventListener("click", () => {
-    working = originalOrder.slice();
-    lastCoords = null;
-    $resetSort.style.display = "none";
-    render();
-  });
+    $q.addEventListener("input", render);
 
-  // -----------------------------
-  // Offline indicator
-  // -----------------------------
-  const offlineBar = document.getElementById("offlineBar");
-  function updateOnlineStatus(){
-    const online = navigator.onLine;
-    offlineBar.style.display = online ? "none" : "block";
-  }
-  window.addEventListener("online", updateOnlineStatus);
-  window.addEventListener("offline", updateOnlineStatus);
-  updateOnlineStatus();
+    $near.addEventListener("click", async () => {
+      if (!navigator.geolocation) {
+        toast("Location not supported on this device.");
+        return;
+      }
 
-  // -----------------------------
-  // Install UX (Android) + iOS tip
-  // -----------------------------
-  let deferredPrompt = null;
+      $near.disabled = true;
+      $near.textContent = "Locating...";
 
-  const installBar = document.getElementById("installBar");
-  const installBtn = document.getElementById("installBtn");
-  const dismissInstall = document.getElementById("dismissInstall");
-  const iosTip = document.getElementById("iosTip");
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
 
-  const inStandalone =
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true;
+          // If you later add lat/lon to shelters.js, this becomes super accurate.
+          // For now, we’ll do “best effort”: only compute distance for entries that have lat/lon.
+          let computed = 0;
+          for (const p of places) {
+            if (typeof p.lat === "number" && typeof p.lon === "number") {
+              p.distKm = havKm(latitude, longitude, p.lat, p.lon);
+              computed++;
+            } else {
+              p.distKm = null;
+            }
+          }
 
-  if (isIOS() && !inStandalone) iosTip.style.display = "block";
+          sortByNearest = true;
+          render();
 
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    if (!inStandalone) installBar.style.display = "block";
-  });
+          if (computed === 0) {
+            toast("Add lat/lon in shelters.js for true “near me” sorting.");
+          } else {
+            toast("Sorted by nearest.");
+          }
 
-  installBtn.addEventListener("click", async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    installBar.style.display = "none";
-  });
-
-  dismissInstall.addEventListener("click", () => {
-    installBar.style.display = "none";
-  });
-
-  // -----------------------------
-  // Service Worker registration (must be inside <body> / end of doc)
-  // -----------------------------
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+          $near.disabled = false;
+          $near.textContent = "Near me";
+        },
+        () => {
+          toast("Location permission denied.");
+          $near.disabled = false;
+          $near.textContent = "Near me";
+        },
+        { enableHighAccuracy: true, timeout: 9000, maximumAge: 30000 }
+      );
     });
-  }
 
-  // First render
-  render();
-</script>
+    buildFilters();
+    render();
+  </script>
 </body>
 </html>
