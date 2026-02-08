@@ -6,6 +6,8 @@ window.SHELTERS = [
     type: "Shelter",
     notes: "Low-barrier shelter (women). Open 6pm–9am daily. Meals/snacks. Pets accepted with restrictions.",
     address: "131 Dunlevy Avenue, Vancouver, BC V6A 3A4",
+    lat: 49.283749851728935, 
+    lon: -123.09549341534019
     phone: "604-602-9463",
     email: "sistersshelter@atira.bc.ca"
   },
@@ -14,12 +16,16 @@ window.SHELTERS = [
     type: "Shelter",
     notes: "Low-barrier shelter for self-identified women. Open 24/7. Meals/snacks; storage available; wheelchair accessible.",
     address: "342 Alexander Street, Vancouver, BC V6A 1C3"
+    lat: 49.28396924513424,
+    lon: -123.09652674828338
   },
   {
     name: "Agape Street Ministry",
     type: "Support / Outreach",
     notes: "Street outreach support for women 19+ in the DTES.",
     address: "Kateri House, 887 Keefer Street, Vancouver, BC V6J 1T4",
+    lat: 49.27961101019045,
+    lon: -123.08546978897469
     phone: "604-215-4115"
   },
   {
@@ -27,12 +33,16 @@ window.SHELTERS = [
     type: "Shelter",
     notes: "Year-round, low-barrier, 24-hour emergency shelter (adults 19+). Intake 24h.",
     address: "467 Alexander Street, Vancouver, BC V6A 1C6"
+    lat: 49.28432527884914, 
+    lon: -123.09435604431644
   },
   {
     name: "Belkin House Emergency Shelter for Women (Salvation Army)",
     type: "Shelter",
     notes: "Women 19+. 24-hour line and front desk available.",
     address: "555 Homer Street, Vancouver, BC V6B 1K8",
+    Lat: 49.282843123318514,
+    lon: -123.11307321931736
     phone: "604-694-6623",
     email: "belkinhouse.womenshelter@salvationarmy.ca"
   },
