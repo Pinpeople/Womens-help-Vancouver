@@ -5,12 +5,12 @@ const CACHE_NAME = "whv-cache-v2";
 const ASSETS = [
   "./",
   "./index.html",
+  "./shelters.js",
   "./manifest.json",
-  "./service-worker.js",
   "./offline.html",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png"
+  "./apple-touch-icon.png",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
