@@ -2,264 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Women’s Help — Vancouver</title>
+  <meta name="description" content="Quick contacts + directions. Search by name, address, or notes. Works offline once opened." />
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
 
-  <!-- Optional: prevent iOS from auto-linking random numbers; we explicitly make tel: links -->
-  <meta name="format-detection" content="telephone=no">
+  <!-- Leaflet (map) -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
 
   <style>
-    :root{
-      --bg:#f6f7f8;
-      --card:#ffffff;
-      --text:#101010;
-      --muted:#5b5b5b;
-      --stroke:#e6e6e6;
-      --shadow: 0 1px 0 rgba(0,0,0,0.03);
+    :root {
+      --bg:#f6f7f8; --card:#fff; --text:#111; --muted:#555;
+      --stroke:#e6e6e6; --shadow: 0 1px 0 rgba(0,0,0,0.02);
       --radius:18px;
-      --radius2:14px;
-      --pad:14px;
-      --max: 980px;
-      --primary:#111111;
     }
-
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
-    body{
+    * { box-sizing:border-box; }
+    body {
       margin:0;
-      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
     }
+    header { padding:22px 18px 10px; max-width:980px; margin:0 auto; }
+    h1 { margin:0 0 8px; font-size:34px; letter-spacing:-0.4px; }
+    p { margin:0; color:var(--muted); line-height:1.35; }
 
-    a{ color:inherit; }
+    .wrap { max-width:980px; margin:0 auto; padding:12px 12px 28px; }
 
-    header{
-      padding:22px 18px 12px;
-      max-width:var(--max);
-      margin:0 auto;
+    .panel {
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:12px;
+      margin: 10px 6px 12px;
     }
 
-    h1{
-      margin:0 0 6px;
-      font-size:34px;
-      letter-spacing:-0.5px;
-      line-height:1.08;
-    }
-
-    .sub{
-      margin:0;
-      color:var(--muted);
-      line-height:1.35;
-      font-size:15px;
-    }
-
-    .wrap{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:12px 12px 28px;
-    }
-
-    .toolbar{
+    .toolbar {
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
-      margin:12px 6px 12px;
+      margin:12px 6px 14px;
     }
 
-    .search{
+    .search {
       flex: 1 1 260px;
       background:#fff;
       border:1px solid var(--stroke);
-      border-radius:999px;
+      border-radius:14px;
       padding:12px 14px;
       font-size:16px;
       outline:none;
     }
-    .search:focus{ border-color:#cfcfcf; }
 
-    .btnpill{
+    .btn {
+      appearance:none;
       border:1px solid var(--stroke);
       background:#fff;
-      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-weight:700;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .btn.primary { background:#111; color:#fff; border-color:#111; }
+    .btn:disabled { opacity:.6; cursor:not-allowed; }
+
+    .pill {
+      background:#fff;
+      border:1px solid var(--stroke);
       border-radius:999px;
       padding:10px 12px;
       font-size:14px;
-      font-weight:700;
-      cursor:pointer;
-      user-select:none;
-    }
-    .btnpill:active{ transform: translateY(1px); }
-    .btnpill.primary{
-      background:var(--primary);
-      color:#fff;
-      border-color:var(--primary);
-    }
-    .btnpill.ghost{
-      background:#fff;
       color:var(--muted);
-      font-weight:600;
-    }
-
-    .statusrow{
       display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin:0 6px 14px;
-      color:var(--muted);
-      font-size:13px;
-    }
-
-    .badge{
-      display:inline-flex;
       align-items:center;
       gap:8px;
-      padding:8px 10px;
-      border:1px solid var(--stroke);
-      background:#fff;
-      border-radius:999px;
-    }
-    .dot{
-      width:8px;height:8px;border-radius:999px;background:#bbb;
-    }
-    .dot.ok{ background:#2aa84a; }
-    .dot.warn{ background:#f0b429; }
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:12px;
-    }
-    @media (min-width:760px){
-      .grid{ grid-template-columns: 1fr 1fr; }
-    }
-
-    .card{
-      background:var(--card);
-      border:1px solid var(--stroke);
-      border-radius:var(--radius);
-      padding:var(--pad);
-      box-shadow:var(--shadow);
-    }
-
-    .topline{
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-      justify-content:space-between;
-    }
-
-    .name{
-      font-size:18px;
-      font-weight:800;
-      margin:0;
-      line-height:1.2;
-    }
-
-    .tag{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      color:var(--muted);
-      background:#fafafa;
       white-space:nowrap;
-      height:fit-content;
     }
-
-    .meta{
-      margin-top:8px;
-      font-size:14px;
-      color:var(--muted);
-      line-height:1.35;
-    }
-    .meta b{ color:var(--text); }
-
-    .btns{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-
-    a.btn{
+    .dot {
+      width:10px; height:10px; border-radius:50%;
+      background:#21a366;
       display:inline-block;
-      text-decoration:none;
-      color:var(--text);
-      background:#fff;
+    }
+
+    .mapwrap {
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+
+    #map {
+      width:100%;
+      height: 320px;
+      border-radius: 14px;
       border:1px solid var(--stroke);
-      padding:10px 12px;
-      border-radius:var(--radius2);
-      font-weight:750;
-      font-size:14px;
-    }
-    a.btn.primary{
-      background:var(--primary);
-      color:#fff;
-      border-color:var(--primary);
+      overflow:hidden;
+      background:#fafafa;
     }
 
-    .empty{
-      padding:18px 10px;
-      color:var(--muted);
-      text-align:center;
-    }
-
-    footer{
-      max-width:var(--max);
-      margin:0 auto;
-      padding:6px 18px 26px;
+    .hint {
       color:var(--muted);
       font-size:13px;
       line-height:1.35;
+      padding: 0 2px;
     }
 
-    .small{
-      font-size:12px;
-      color:var(--muted);
-    }
+    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
+    @media (min-width:820px){ .grid{ grid-template-columns: 1fr 1fr; } }
 
-    .kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
+    .card {
+      background:var(--card);
       border:1px solid var(--stroke);
-      background:#fff;
-      padding:2px 6px;
-      border-radius:8px;
-      color:var(--text);
+      border-radius: var(--radius);
+      padding:14px;
+      box-shadow: var(--shadow);
     }
+    .name { font-size:18px; font-weight:800; margin:0 0 4px; }
+    .meta { font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
+    .tagrow { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
+    .tag { font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid var(--stroke); color:var(--muted); background:#fafafa; }
+
+    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    a.linkbtn {
+      display:inline-block;
+      text-decoration:none;
+      color:#111;
+      background:#fff;
+      border:1px solid var(--stroke);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:800;
+      font-size:14px;
+    }
+    a.linkbtn.primary { background:#111; color:#fff; border-color:#111; }
+
+    .empty {
+      text-align:center;
+      color:var(--muted);
+      padding: 20px 8px 10px;
+    }
+
+    footer { max-width:980px; margin:0 auto; padding:8px 18px 30px; color:var(--muted); font-size:13px; }
+    .small { font-size:12px; color:var(--muted); }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
   </style>
 </head>
 
 <body>
   <header>
     <h1>Women’s Help — Vancouver</h1>
-    <p class="sub">
-      Quick contacts + directions. Search by name, address, or notes. Works offline once opened.
-    </p>
+    <p>Quick contacts + directions. Search by name, address, or notes. Works offline once opened.</p>
   </header>
 
   <div class="wrap">
     <div class="toolbar">
       <input id="q" class="search" placeholder="Search (name, address, notes)…" autocomplete="off" />
-      <button id="nearBtn" class="btnpill">Near me</button>
-      <button id="resetBtn" class="btnpill ghost" title="Clear search + sorting">Reset</button>
+      <button id="nearBtn" class="btn" type="button">Near me</button>
+      <button id="resetBtn" class="btn" type="button">Reset</button>
+      <div class="pill" id="count"><span class="dot"></span><span>0 listed</span></div>
     </div>
 
-    <div class="statusrow">
-      <span class="badge" id="countBadge"><span class="dot"></span><span id="count">0 listed</span></span>
-      <span class="badge" id="offlineBadge" style="display:none;"><span class="dot warn"></span><span>Offline mode</span></span>
-      <span class="badge" id="nearBadge" style="display:none;"><span class="dot ok"></span><span id="nearText">Sorting by distance</span></span>
+    <div class="panel">
+      <div class="mapwrap">
+        <div id="map" aria-label="Map of shelters"></div>
+        <div class="hint" id="mapHint">
+          Tip: Tap a marker to open that place. “Near me” sorts the list and zooms closer.
+        </div>
+      </div>
     </div>
 
     <div class="grid" id="list"></div>
@@ -268,228 +191,261 @@
 
   <footer>
     <div class="small">
-      Tip: On iPhone (Safari) → Share → <b>Add to Home Screen</b> to use it like an app.<br>
-      If you update files and things look “stuck”, refresh once or clear site data (PWA cache).
+      iPhone: Safari → Share → <b>Add to Home Screen</b> to install like an app.
+      If things look “stuck”, refresh once or clear site data (service worker cache).
     </div>
   </footer>
 
-  <!-- Data -->
+  <!-- IMPORTANT: load your data FIRST -->
   <script src="./shelters.js"></script>
 
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+
   <script>
-    // Register service worker (PWA offline)
+    // Register service worker (optional)
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./service-worker.js").catch(() => {});
       });
     }
 
-    // Helpers
+    // ---- Helpers
     const $ = (id) => document.getElementById(id);
     const enc = (s) => encodeURIComponent(s || "");
     const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
     const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
     const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
 
-    function distanceKm(aLat, aLon, bLat, bLon){
-      // Haversine
+    // Haversine distance (km)
+    function kmBetween(aLat, aLon, bLat, bLon) {
       const R = 6371;
       const toRad = (x) => x * Math.PI / 180;
       const dLat = toRad(bLat - aLat);
       const dLon = toRad(bLon - aLon);
       const lat1 = toRad(aLat);
       const lat2 = toRad(bLat);
-
-      const s = Math.sin(dLat/2) ** 2 +
-                Math.cos(lat1) * Math.cos(lat2) * (Math.sin(dLon/2) ** 2);
+      const s = Math.sin(dLat/2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * (Math.sin(dLon/2) ** 2);
       const c = 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
       return R * c;
     }
 
-    // State
+    // ---- Data load
     const raw = Array.isArray(window.SHELTERS) ? window.SHELTERS.slice() : [];
+    // If this is empty, shelters.js didn’t load.
+    // (Open DevTools console: you should NOT see 404 for shelters.js)
     let shelters = raw.slice();
-    let userLoc = null;           // {lat, lon}
+
+    // ---- UI state
+    let userLoc = null; // {lat, lon}
     let sortByNear = false;
 
-    // Elements
     const $list = $("list");
     const $q = $("q");
     const $count = $("count");
     const $empty = $("empty");
-    const $countBadge = $("countBadge");
-    const $offlineBadge = $("offlineBadge");
-    const $nearBadge = $("nearBadge");
-    const $nearText = $("nearText");
     const $nearBtn = $("nearBtn");
     const $resetBtn = $("resetBtn");
 
-    // Offline indicator
-    function updateOnlineUI(){
-      const online = navigator.onLine;
-      $offlineBadge.style.display = online ? "none" : "inline-flex";
-    }
-    window.addEventListener("online", updateOnlineUI);
-    window.addEventListener("offline", updateOnlineUI);
-    updateOnlineUI();
+    // ---- Map
+    let map = null;
+    let markersLayer = null;
+    let userMarker = null;
+    const markerByName = new Map();
 
-    function normalizeShelter(s){
-      return {
-        name: (s.name || "").trim(),
-        type: (s.type || s.kind || "").trim(),
-        address: (s.address || "").trim(),
-        phone: (s.phone || "").trim(),
-        email: (s.email || "").trim(),
-        notes: (s.notes || "").trim(),
-        lat: typeof s.lat === "number" ? s.lat : null,
-        lon: typeof s.lon === "number" ? s.lon : null
-      };
+    function initMap() {
+      // Default view: Downtown Vancouver-ish
+      map = L.map("map", { zoomControl: true }).setView([49.2827, -123.1207], 12);
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      markersLayer = L.layerGroup().addTo(map);
+      rebuildMarkers(shelters);
     }
 
-    function card(p){
-      const tel = p.phone ? `tel:${fmtPhone(p.phone)}` : "";
-      const mail = p.email ? `mailto:${p.email}` : "";
-      const dirApple = p.address ? appleMaps(p.address) : "";
-      const dirGoogle = p.address ? googleMaps(p.address) : "";
+    function rebuildMarkers(list) {
+      if (!map || !markersLayer) return;
+      markersLayer.clearLayers();
+      markerByName.clear();
 
-      let distLine = "";
-      if (sortByNear && userLoc && p.lat != null && p.lon != null) {
-        const km = distanceKm(userLoc.lat, userLoc.lon, p.lat, p.lon);
-        distLine = `<div style="margin-top:6px;"><b>Distance:</b> ${km.toFixed(1)} km</div>`;
+      const pts = [];
+
+      for (const s of list) {
+        if (typeof s.lat !== "number" || typeof s.lon !== "number") continue;
+        const m = L.marker([s.lat, s.lon]).addTo(markersLayer);
+        const title = s.name || "Shelter";
+        const addr = s.address ? `<div style="margin-top:4px;color:#555;font-size:12px;">${s.address}</div>` : "";
+        m.bindPopup(`<b>${title}</b>${addr}`);
+        markerByName.set(title, m);
+        pts.push([s.lat, s.lon]);
       }
 
-      const tag = p.type ? `<span class="tag">${p.type}</span>` : "";
+      // Fit bounds if we have points
+      if (pts.length >= 2) {
+        const bounds = L.latLngBounds(pts);
+        map.fitBounds(bounds.pad(0.18));
+      } else if (pts.length === 1) {
+        map.setView(pts[0], 14);
+      }
+    }
+
+    function showUserOnMap(lat, lon) {
+      if (!map) return;
+      if (userMarker) map.removeLayer(userMarker);
+      userMarker = L.circleMarker([lat, lon], {
+        radius: 8,
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.5
+      }).addTo(map);
+      userMarker.bindPopup("<b>You are here</b>");
+    }
+
+    // ---- Rendering
+    function card(s) {
+      const tel = s.phone ? `tel:${fmtPhone(s.phone)}` : "";
+      const mail = s.email ? `mailto:${s.email}` : "";
+      const dirApple = s.address ? appleMaps(s.address) : "";
+      const dirGoogle = s.address ? googleMaps(s.address) : "";
+
+      const tags = [s.type].filter(Boolean).map(t => `<span class="tag">${t}</span>`).join("");
+
+      const distLine = (userLoc && typeof s.lat === "number" && typeof s.lon === "number")
+        ? (() => {
+            const km = kmBetween(userLoc.lat, userLoc.lon, s.lat, s.lon);
+            const pretty = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+            return `<div style="margin-top:6px;"><b>Distance:</b> ${pretty}</div>`;
+          })()
+        : "";
 
       return `
-        <div class="card">
-          <div class="topline">
-            <h2 class="name">${p.name || "Untitled"}</h2>
-            ${tag}
-          </div>
-
+        <div class="card" data-name="${(s.name || "").replace(/"/g, "&quot;")}">
+          <div class="name">${s.name || "—"}</div>
           <div class="meta">
-            ${p.address ? `<div><b>Address:</b> ${p.address}</div>` : ""}
-            ${p.notes ? `<div style="margin-top:6px;">${p.notes}</div>` : ""}
+            ${s.address ? `<div><b>Address:</b> ${s.address}</div>` : ""}
+            ${s.notes ? `<div style="margin-top:6px;">${s.notes}</div>` : ""}
             ${distLine}
           </div>
-
+          <div class="tagrow">${tags}</div>
           <div class="btns">
-            ${p.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
-            ${p.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
-            ${p.address ? `<a class="btn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
-            ${p.address ? `<a class="btn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
+            ${s.phone ? `<a class="linkbtn primary" href="${tel}">Call</a>` : ``}
+            ${s.email ? `<a class="linkbtn" href="${mail}">Email</a>` : ``}
+            ${s.address ? `<a class="linkbtn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
+            ${s.address ? `<a class="linkbtn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
+            ${typeof s.lat === "number" && typeof s.lon === "number"
+              ? `<button class="btn" type="button" data-zoom="1">Show on map</button>`
+              : ``}
           </div>
         </div>
       `;
     }
 
-    function applySearchAndRender(){
+    function filteredList() {
       const query = ($q.value || "").toLowerCase().trim();
-      let filtered = shelters.filter(p => {
-        const blob = `${p.name} ${p.type} ${p.address} ${p.phone} ${p.email} ${p.notes}`.toLowerCase();
+      let out = shelters.filter(s => {
+        const blob = `${s.name} ${s.type} ${s.address} ${s.phone} ${s.email} ${s.notes}`.toLowerCase();
         return blob.includes(query);
       });
 
-      $list.innerHTML = filtered.map(card).join("");
-      $count.textContent = `${filtered.length} listed`;
-      $empty.style.display = filtered.length ? "none" : "block";
-
-      // nice badge dot
-      const dot = $countBadge.querySelector(".dot");
-      if (dot) dot.className = "dot ok";
-    }
-
-    function setNearBadge(on, text){
-      $nearBadge.style.display = on ? "inline-flex" : "none";
-      if (text) $nearText.textContent = text;
-    }
-
-    async function requestLocationAndSort(){
-      if (!("geolocation" in navigator)) {
-        setNearBadge(true, "Location not supported on this device");
-        return;
+      if (sortByNear && userLoc) {
+        out = out.slice().sort((a, b) => {
+          const aOk = typeof a.lat === "number" && typeof a.lon === "number";
+          const bOk = typeof b.lat === "number" && typeof b.lon === "number";
+          if (!aOk && !bOk) return 0;
+          if (!aOk) return 1;
+          if (!bOk) return -1;
+          const da = kmBetween(userLoc.lat, userLoc.lon, a.lat, a.lon);
+          const db = kmBetween(userLoc.lat, userLoc.lon, b.lat, b.lon);
+          return da - db;
+        });
       }
 
-      // If we already have a location, just toggle sort off/on
-      if (userLoc && sortByNear) {
-        sortByNear = false;
-        shelters = raw.map(normalizeShelter);
-        setNearBadge(false);
-        $nearBtn.classList.remove("primary");
-        $nearBtn.textContent = "Near me";
-        applySearchAndRender();
+      return out;
+    }
+
+    function render() {
+      const list = filteredList();
+
+      $list.innerHTML = list.map(card).join("");
+      $empty.style.display = list.length ? "none" : "block";
+      $count.innerHTML = `<span class="dot"></span><span>${list.length} listed</span>`;
+
+      // Update markers to match the filtered list
+      rebuildMarkers(list);
+
+      // Hook up "Show on map" buttons
+      $list.querySelectorAll('button[data-zoom="1"]').forEach(btn => {
+        btn.addEventListener("click", (e) => {
+          const cardEl = e.target.closest(".card");
+          const name = cardEl?.getAttribute("data-name");
+          if (!name || !map) return;
+          const m = markerByName.get(name);
+          if (m) {
+            map.setView(m.getLatLng(), Math.max(map.getZoom(), 15));
+            m.openPopup();
+            document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        });
+      });
+    }
+
+    // ---- Near me
+    function nearMe() {
+      if (!navigator.geolocation) {
+        alert("Geolocation isn’t available on this device/browser.");
         return;
       }
-
-      $nearBtn.textContent = "Locating…";
       $nearBtn.disabled = true;
+      $nearBtn.textContent = "Locating…";
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           userLoc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
           sortByNear = true;
 
-          const normalized = raw.map(normalizeShelter);
+          showUserOnMap(userLoc.lat, userLoc.lon);
+          if (map) map.setView([userLoc.lat, userLoc.lon], 13);
 
-          // Only sort by distance for entries with lat/lon; keep others at the end
-          normalized.sort((a, b) => {
-            const aHas = a.lat != null && a.lon != null;
-            const bHas = b.lat != null && b.lon != null;
-            if (!aHas && !bHas) return 0;
-            if (!aHas) return 1;
-            if (!bHas) return -1;
-
-            const da = distanceKm(userLoc.lat, userLoc.lon, a.lat, a.lon);
-            const db = distanceKm(userLoc.lat, userLoc.lon, b.lat, b.lon);
-            return da - db;
-          });
-
-          shelters = normalized;
-
-          setNearBadge(true, "Sorting by distance (needs lat/lon in shelters.js)");
-          $nearBtn.classList.add("primary");
-          $nearBtn.textContent = "Near me ✓";
           $nearBtn.disabled = false;
-          applySearchAndRender();
+          $nearBtn.textContent = "Near me";
+          render();
         },
         (err) => {
-          sortByNear = false;
-          userLoc = null;
-
-          let msg = "Location denied";
-          if (err && err.code === 1) msg = "Location denied";
-          if (err && err.code === 2) msg = "Location unavailable";
-          if (err && err.code === 3) msg = "Location timeout";
-
-          setNearBadge(true, msg);
-          $nearBtn.textContent = "Near me";
           $nearBtn.disabled = false;
+          $nearBtn.textContent = "Near me";
+          alert("Couldn’t get location. If you’re on iPhone, make sure Safari location is allowed for this site.");
+          console.log(err);
         },
         { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
       );
     }
 
-    function resetAll(){
+    function resetAll() {
       $q.value = "";
-      shelters = raw.map(normalizeShelter);
-      sortByNear = false;
       userLoc = null;
-      setNearBadge(false);
-      $nearBtn.classList.remove("primary");
-      $nearBtn.textContent = "Near me";
-      applySearchAndRender();
-      $q.focus();
+      sortByNear = false;
+      if (map && userMarker) {
+        map.removeLayer(userMarker);
+        userMarker = null;
+      }
+      render();
     }
 
-    // Init
-    shelters = raw.map(normalizeShelter);
+    // ---- Boot
+    initMap();
 
-    // Wire up
-    $q.addEventListener("input", applySearchAndRender);
-    $nearBtn.addEventListener("click", requestLocationAndSort);
+    $q.addEventListener("input", render);
+    $nearBtn.addEventListener("click", nearMe);
     $resetBtn.addEventListener("click", resetAll);
 
-    applySearchAndRender();
+    render();
   </script>
 </body>
 </html>
