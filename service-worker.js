@@ -1,5 +1,5 @@
 /* Women’s Help — Vancouver (PWA) Service Worker */
-const CACHE_NAME = "whv-cache-v2";
+const CACHE_NAME = "whv-cache-v4";
 
 // All paths are RELATIVE to the site root for this project: /Womens-help-Vancouver/
 const ASSETS = [
