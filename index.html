@@ -4,52 +4,57 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Women’s Help — Vancouver</title>
-  <meta name="description" content="Quick contacts + directions for women’s shelters and supports in/near Vancouver. Works offline after first open." />
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Women’s Help">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Women’s Help">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-  <!-- Icons (your repo has these in ROOT) -->
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <link rel="icon" href="./icon-192.png">
+
+  <!-- Optional: prevent iOS from auto-linking random numbers; we explicitly make tel: links -->
+  <meta name="format-detection" content="telephone=no">
 
   <style>
     :root{
       --bg:#f6f7f8;
-      --card:#fff;
-      --text:#101114;
-      --muted:#5b5f66;
-      --stroke:#e6e6e8;
-      --shadow: 0 1px 0 rgba(0,0,0,0.02);
+      --card:#ffffff;
+      --text:#101010;
+      --muted:#5b5b5b;
+      --stroke:#e6e6e6;
+      --shadow: 0 1px 0 rgba(0,0,0,0.03);
       --radius:18px;
       --radius2:14px;
+      --pad:14px;
       --max: 980px;
+      --primary:#111111;
     }
+
     *{ box-sizing:border-box; }
+    html,body{ height:100%; }
     body{
       margin:0;
-      font-family:-apple-system, system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
       background:var(--bg);
       color:var(--text);
     }
+
     a{ color:inherit; }
+
     header{
+      padding:22px 18px 12px;
       max-width:var(--max);
       margin:0 auto;
-      padding:24px 16px 8px;
     }
+
     h1{
-      margin:0 0 8px;
+      margin:0 0 6px;
       font-size:34px;
       letter-spacing:-0.5px;
-      line-height:1.05;
+      line-height:1.08;
     }
+
     .sub{
       margin:0;
       color:var(--muted);
@@ -60,96 +65,80 @@
     .wrap{
       max-width:var(--max);
       margin:0 auto;
-      padding:10px 12px 26px;
+      padding:12px 12px 28px;
     }
 
-    /* Sticky toolbar */
-    .sticky{
-      position:sticky;
-      top:0;
-      z-index:10;
-      background:linear-gradient(to bottom, rgba(246,247,248,0.98), rgba(246,247,248,0.92));
-      backdrop-filter:saturate(180%) blur(10px);
-      padding:10px 6px 10px;
-      border-bottom:1px solid rgba(0,0,0,0.04);
-      margin:0 0 10px;
-    }
     .toolbar{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
+      margin:12px 6px 12px;
     }
+
     .search{
       flex: 1 1 260px;
       background:#fff;
       border:1px solid var(--stroke);
-      border-radius:var(--radius2);
+      border-radius:999px;
       padding:12px 14px;
       font-size:16px;
       outline:none;
     }
-    .btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding:11px 12px;
-      border-radius:var(--radius2);
+    .search:focus{ border-color:#cfcfcf; }
+
+    .btnpill{
       border:1px solid var(--stroke);
       background:#fff;
-      font-weight:650;
+      color:var(--text);
+      border-radius:999px;
+      padding:10px 12px;
       font-size:14px;
+      font-weight:700;
       cursor:pointer;
       user-select:none;
-      text-decoration:none;
     }
-    .btn.primary{
-      background:#111;
-      border-color:#111;
+    .btnpill:active{ transform: translateY(1px); }
+    .btnpill.primary{
+      background:var(--primary);
       color:#fff;
+      border-color:var(--primary);
     }
-    .btn:disabled{
-      opacity:0.55;
-      cursor:not-allowed;
-    }
-    .pill{
-      padding:10px 12px;
-      border:1px solid var(--stroke);
-      border-radius:999px;
+    .btnpill.ghost{
       background:#fff;
       color:var(--muted);
-      font-size:14px;
-      white-space:nowrap;
+      font-weight:600;
     }
 
-    .filters{
+    .statusrow{
       display:flex;
-      gap:8px;
+      gap:10px;
       flex-wrap:wrap;
-      margin:10px 0 0;
+      align-items:center;
+      margin:0 6px 14px;
+      color:var(--muted);
+      font-size:13px;
     }
-    .chip{
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
       border:1px solid var(--stroke);
       background:#fff;
-      color:var(--muted);
       border-radius:999px;
-      padding:8px 10px;
-      font-size:13px;
-      cursor:pointer;
-      user-select:none;
     }
-    .chip.active{
-      border-color:#111;
-      color:#111;
-      box-shadow:0 0 0 1px #111 inset;
+    .dot{
+      width:8px;height:8px;border-radius:999px;background:#bbb;
     }
+    .dot.ok{ background:#2aa84a; }
+    .dot.warn{ background:#f0b429; }
 
     .grid{
       display:grid;
-      grid-template-columns: 1fr;
+      grid-template-columns:1fr;
       gap:12px;
-      padding:0 6px;
     }
     @media (min-width:760px){
       .grid{ grid-template-columns: 1fr 1fr; }
@@ -159,100 +148,132 @@
       background:var(--card);
       border:1px solid var(--stroke);
       border-radius:var(--radius);
-      padding:14px;
+      padding:var(--pad);
       box-shadow:var(--shadow);
     }
+
+    .topline{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+
     .name{
-      margin:0 0 6px;
       font-size:18px;
       font-weight:800;
-      letter-spacing:-0.2px;
-      line-height:1.15;
+      margin:0;
+      line-height:1.2;
     }
-    .meta{
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.4;
-    }
-    .meta b{ color:#2b2f35; }
-    .tagrow{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
+
     .tag{
       font-size:12px;
-      padding:6px 8px;
+      padding:6px 10px;
       border-radius:999px;
       border:1px solid var(--stroke);
       color:var(--muted);
       background:#fafafa;
+      white-space:nowrap;
+      height:fit-content;
     }
 
-    .btnrow{
+    .meta{
+      margin-top:8px;
+      font-size:14px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .meta b{ color:var(--text); }
+
+    .btns{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       margin-top:12px;
     }
 
+    a.btn{
+      display:inline-block;
+      text-decoration:none;
+      color:var(--text);
+      background:#fff;
+      border:1px solid var(--stroke);
+      padding:10px 12px;
+      border-radius:var(--radius2);
+      font-weight:750;
+      font-size:14px;
+    }
+    a.btn.primary{
+      background:var(--primary);
+      color:#fff;
+      border-color:var(--primary);
+    }
+
+    .empty{
+      padding:18px 10px;
+      color:var(--muted);
+      text-align:center;
+    }
+
     footer{
       max-width:var(--max);
       margin:0 auto;
-      padding:10px 16px 30px;
+      padding:6px 18px 26px;
       color:var(--muted);
       font-size:13px;
+      line-height:1.35;
     }
-    .tiny{ font-size:12px; color:var(--muted); line-height:1.35; }
 
-    .toast{
-      position:fixed;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:18px;
-      background:#111;
-      color:#fff;
-      padding:10px 12px;
-      border-radius:999px;
-      font-size:13px;
-      opacity:0;
-      pointer-events:none;
-      transition: opacity 180ms ease;
+    .small{
+      font-size:12px;
+      color:var(--muted);
     }
-    .toast.show{ opacity:0.92; }
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      border:1px solid var(--stroke);
+      background:#fff;
+      padding:2px 6px;
+      border-radius:8px;
+      color:var(--text);
+    }
   </style>
 </head>
 
 <body>
   <header>
     <h1>Women’s Help — Vancouver</h1>
-    <p class="sub">Quick contacts + directions. Works offline after first open.</p>
+    <p class="sub">
+      Quick contacts + directions. Search by name, address, or notes. Works offline once opened.
+    </p>
   </header>
 
   <div class="wrap">
-    <div class="sticky">
-      <div class="toolbar">
-        <input id="q" class="search" placeholder="Search (name, address, notes)..." autocomplete="off" />
-        <button id="near" class="btn" type="button">Near me</button>
-        <div id="count" class="pill">—</div>
-      </div>
-      <div id="filters" class="filters"></div>
+    <div class="toolbar">
+      <input id="q" class="search" placeholder="Search (name, address, notes)…" autocomplete="off" />
+      <button id="nearBtn" class="btnpill">Near me</button>
+      <button id="resetBtn" class="btnpill ghost" title="Clear search + sorting">Reset</button>
     </div>
 
-    <div id="list" class="grid"></div>
+    <div class="statusrow">
+      <span class="badge" id="countBadge"><span class="dot"></span><span id="count">0 listed</span></span>
+      <span class="badge" id="offlineBadge" style="display:none;"><span class="dot warn"></span><span>Offline mode</span></span>
+      <span class="badge" id="nearBadge" style="display:none;"><span class="dot ok"></span><span id="nearText">Sorting by distance</span></span>
+    </div>
+
+    <div class="grid" id="list"></div>
+    <div class="empty" id="empty" style="display:none;">No matches. Try a different search.</div>
   </div>
 
   <footer>
-    <div class="tiny">
-      Tip (iPhone): Safari → Share → <b>Add to Home Screen</b> to make it behave like an app.<br>
-      If something looks wrong after updates: hard refresh (Ctrl+Shift+R) or clear site data.
+    <div class="small">
+      Tip: On iPhone (Safari) → Share → <b>Add to Home Screen</b> to use it like an app.<br>
+      If you update files and things look “stuck”, refresh once or clear site data (PWA cache).
     </div>
   </footer>
 
-  <div id="toast" class="toast"></div>
-
-  <!-- Your data file -->
+  <!-- Data -->
   <script src="./shelters.js"></script>
 
   <script>
@@ -263,77 +284,66 @@
       });
     }
 
-    const $list = document.getElementById("list");
-    const $q = document.getElementById("q");
-    const $count = document.getElementById("count");
-    const $near = document.getElementById("near");
-    const $filters = document.getElementById("filters");
-    const $toast = document.getElementById("toast");
-
-    // Try to support whatever your shelters.js exposes
-    // (examples: window.places, window.PLACES, window.SHELTERS)
-    const DATA =
-      (window.places && Array.isArray(window.places) && window.places) ||
-      (window.PLACES && Array.isArray(window.PLACES) && window.PLACES) ||
-      (window.SHELTERS && Array.isArray(window.SHELTERS) && window.SHELTERS) ||
-      [];
-
-    // Normalize records so the UI is consistent
-    const places = DATA.map(p => ({
-      name: p.name || "",
-      kind: p.kind || p.type || "",
-      address: p.address || "",
-      phone: p.phone || "",
-      email: p.email || "",
-      notes: p.notes || p.description || "",
-      lat: typeof p.lat === "number" ? p.lat : null,
-      lon: typeof p.lon === "number" ? p.lon : null,
-      distKm: null
-    }));
-
-    function toast(msg){
-      $toast.textContent = msg;
-      $toast.classList.add("show");
-      setTimeout(() => $toast.classList.remove("show"), 2200);
-    }
-
+    // Helpers
+    const $ = (id) => document.getElementById(id);
     const enc = (s) => encodeURIComponent(s || "");
     const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
     const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
     const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
 
-    // Simple distance calc (Haversine)
-    function havKm(lat1, lon1, lat2, lon2){
+    function distanceKm(aLat, aLon, bLat, bLon){
+      // Haversine
       const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI/180;
-      const dLon = (lon2 - lon1) * Math.PI/180;
-      const a =
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) *
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const toRad = (x) => x * Math.PI / 180;
+      const dLat = toRad(bLat - aLat);
+      const dLon = toRad(bLon - aLon);
+      const lat1 = toRad(aLat);
+      const lat2 = toRad(bLat);
+
+      const s = Math.sin(dLat/2) ** 2 +
+                Math.cos(lat1) * Math.cos(lat2) * (Math.sin(dLon/2) ** 2);
+      const c = 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
       return R * c;
     }
 
-    let activeKind = "All";
-    let sortByNearest = false;
+    // State
+    const raw = Array.isArray(window.SHELTERS) ? window.SHELTERS.slice() : [];
+    let shelters = raw.slice();
+    let userLoc = null;           // {lat, lon}
+    let sortByNear = false;
 
-    function buildFilters(){
-      const kinds = ["All", ...Array.from(new Set(places.map(p => p.kind).filter(Boolean))).sort()];
-      $filters.innerHTML = kinds.map(k => `
-        <div class="chip ${k === activeKind ? "active" : ""}" data-kind="${k}">
-          ${k}
-        </div>
-      `).join("");
+    // Elements
+    const $list = $("list");
+    const $q = $("q");
+    const $count = $("count");
+    const $empty = $("empty");
+    const $countBadge = $("countBadge");
+    const $offlineBadge = $("offlineBadge");
+    const $nearBadge = $("nearBadge");
+    const $nearText = $("nearText");
+    const $nearBtn = $("nearBtn");
+    const $resetBtn = $("resetBtn");
 
-      $filters.querySelectorAll(".chip").forEach(ch => {
-        ch.addEventListener("click", () => {
-          activeKind = ch.dataset.kind || "All";
-          sortByNearest = false; // reset sort unless user taps Near me again
-          render();
-          buildFilters();
-        });
-      });
+    // Offline indicator
+    function updateOnlineUI(){
+      const online = navigator.onLine;
+      $offlineBadge.style.display = online ? "none" : "inline-flex";
+    }
+    window.addEventListener("online", updateOnlineUI);
+    window.addEventListener("offline", updateOnlineUI);
+    updateOnlineUI();
+
+    function normalizeShelter(s){
+      return {
+        name: (s.name || "").trim(),
+        type: (s.type || s.kind || "").trim(),
+        address: (s.address || "").trim(),
+        phone: (s.phone || "").trim(),
+        email: (s.email || "").trim(),
+        notes: (s.notes || "").trim(),
+        lat: typeof s.lat === "number" ? s.lat : null,
+        lon: typeof s.lon === "number" ? s.lon : null
+      };
     }
 
     function card(p){
@@ -342,22 +352,28 @@
       const dirApple = p.address ? appleMaps(p.address) : "";
       const dirGoogle = p.address ? googleMaps(p.address) : "";
 
-      const tags = [
-        p.kind ? `<span class="tag">${p.kind}</span>` : "",
-        (typeof p.distKm === "number") ? `<span class="tag">${p.distKm.toFixed(p.distKm < 10 ? 1 : 0)} km</span>` : ""
-      ].filter(Boolean).join("");
+      let distLine = "";
+      if (sortByNear && userLoc && p.lat != null && p.lon != null) {
+        const km = distanceKm(userLoc.lat, userLoc.lon, p.lat, p.lon);
+        distLine = `<div style="margin-top:6px;"><b>Distance:</b> ${km.toFixed(1)} km</div>`;
+      }
+
+      const tag = p.type ? `<span class="tag">${p.type}</span>` : "";
 
       return `
         <div class="card">
-          <div class="name">${p.name || "Unknown"}</div>
+          <div class="topline">
+            <h2 class="name">${p.name || "Untitled"}</h2>
+            ${tag}
+          </div>
+
           <div class="meta">
             ${p.address ? `<div><b>Address:</b> ${p.address}</div>` : ""}
             ${p.notes ? `<div style="margin-top:6px;">${p.notes}</div>` : ""}
+            ${distLine}
           </div>
 
-          ${tags ? `<div class="tagrow">${tags}</div>` : ""}
-
-          <div class="btnrow">
+          <div class="btns">
             ${p.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
             ${p.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
             ${p.address ? `<a class="btn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
@@ -367,79 +383,113 @@
       `;
     }
 
-    function matchesQuery(p, query){
-      if (!query) return true;
-      const blob = `${p.name} ${p.kind} ${p.address} ${p.phone} ${p.email} ${p.notes}`.toLowerCase();
-      return blob.includes(query);
-    }
-
-    function render(){
+    function applySearchAndRender(){
       const query = ($q.value || "").toLowerCase().trim();
-      let items = places.filter(p => (activeKind === "All" ? true : p.kind === activeKind))
-                        .filter(p => matchesQuery(p, query));
+      let filtered = shelters.filter(p => {
+        const blob = `${p.name} ${p.type} ${p.address} ${p.phone} ${p.email} ${p.notes}`.toLowerCase();
+        return blob.includes(query);
+      });
 
-      if (sortByNearest) {
-        // Only sort if we have distances calculated
-        const hasAny = items.some(p => typeof p.distKm === "number");
-        if (hasAny) {
-          items = items.slice().sort((a,b) => (a.distKm ?? 1e9) - (b.distKm ?? 1e9));
-        }
-      }
+      $list.innerHTML = filtered.map(card).join("");
+      $count.textContent = `${filtered.length} listed`;
+      $empty.style.display = filtered.length ? "none" : "block";
 
-      $list.innerHTML = items.map(card).join("");
-      $count.textContent = `${items.length} listed`;
+      // nice badge dot
+      const dot = $countBadge.querySelector(".dot");
+      if (dot) dot.className = "dot ok";
     }
 
-    $q.addEventListener("input", render);
+    function setNearBadge(on, text){
+      $nearBadge.style.display = on ? "inline-flex" : "none";
+      if (text) $nearText.textContent = text;
+    }
 
-    $near.addEventListener("click", async () => {
-      if (!navigator.geolocation) {
-        toast("Location not supported on this device.");
+    async function requestLocationAndSort(){
+      if (!("geolocation" in navigator)) {
+        setNearBadge(true, "Location not supported on this device");
         return;
       }
 
-      $near.disabled = true;
-      $near.textContent = "Locating...";
+      // If we already have a location, just toggle sort off/on
+      if (userLoc && sortByNear) {
+        sortByNear = false;
+        shelters = raw.map(normalizeShelter);
+        setNearBadge(false);
+        $nearBtn.classList.remove("primary");
+        $nearBtn.textContent = "Near me";
+        applySearchAndRender();
+        return;
+      }
+
+      $nearBtn.textContent = "Locating…";
+      $nearBtn.disabled = true;
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const { latitude, longitude } = pos.coords;
+          userLoc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+          sortByNear = true;
 
-          // If you later add lat/lon to shelters.js, this becomes super accurate.
-          // For now, we’ll do “best effort”: only compute distance for entries that have lat/lon.
-          let computed = 0;
-          for (const p of places) {
-            if (typeof p.lat === "number" && typeof p.lon === "number") {
-              p.distKm = havKm(latitude, longitude, p.lat, p.lon);
-              computed++;
-            } else {
-              p.distKm = null;
-            }
-          }
+          const normalized = raw.map(normalizeShelter);
 
-          sortByNearest = true;
-          render();
+          // Only sort by distance for entries with lat/lon; keep others at the end
+          normalized.sort((a, b) => {
+            const aHas = a.lat != null && a.lon != null;
+            const bHas = b.lat != null && b.lon != null;
+            if (!aHas && !bHas) return 0;
+            if (!aHas) return 1;
+            if (!bHas) return -1;
 
-          if (computed === 0) {
-            toast("Add lat/lon in shelters.js for true “near me” sorting.");
-          } else {
-            toast("Sorted by nearest.");
-          }
+            const da = distanceKm(userLoc.lat, userLoc.lon, a.lat, a.lon);
+            const db = distanceKm(userLoc.lat, userLoc.lon, b.lat, b.lon);
+            return da - db;
+          });
 
-          $near.disabled = false;
-          $near.textContent = "Near me";
+          shelters = normalized;
+
+          setNearBadge(true, "Sorting by distance (needs lat/lon in shelters.js)");
+          $nearBtn.classList.add("primary");
+          $nearBtn.textContent = "Near me ✓";
+          $nearBtn.disabled = false;
+          applySearchAndRender();
         },
-        () => {
-          toast("Location permission denied.");
-          $near.disabled = false;
-          $near.textContent = "Near me";
+        (err) => {
+          sortByNear = false;
+          userLoc = null;
+
+          let msg = "Location denied";
+          if (err && err.code === 1) msg = "Location denied";
+          if (err && err.code === 2) msg = "Location unavailable";
+          if (err && err.code === 3) msg = "Location timeout";
+
+          setNearBadge(true, msg);
+          $nearBtn.textContent = "Near me";
+          $nearBtn.disabled = false;
         },
-        { enableHighAccuracy: true, timeout: 9000, maximumAge: 30000 }
+        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
       );
-    });
+    }
 
-    buildFilters();
-    render();
+    function resetAll(){
+      $q.value = "";
+      shelters = raw.map(normalizeShelter);
+      sortByNear = false;
+      userLoc = null;
+      setNearBadge(false);
+      $nearBtn.classList.remove("primary");
+      $nearBtn.textContent = "Near me";
+      applySearchAndRender();
+      $q.focus();
+    }
+
+    // Init
+    shelters = raw.map(normalizeShelter);
+
+    // Wire up
+    $q.addEventListener("input", applySearchAndRender);
+    $nearBtn.addEventListener("click", requestLocationAndSort);
+    $resetBtn.addEventListener("click", resetAll);
+
+    applySearchAndRender();
   </script>
 </body>
 </html>
