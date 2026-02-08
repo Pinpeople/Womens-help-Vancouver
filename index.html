@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <title>Women’s Help — Vancouver</title>
-  <meta name="description" content="Quick contacts + directions. Search by name, address, or notes. Works offline once opened." />
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#111111">
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" href="./icon-192.png">
 
-  <!-- Leaflet (map) -->
+  <!-- Leaflet (simple map) -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -23,143 +23,80 @@
   />
 
   <style>
-    :root {
-      --bg:#f6f7f8; --card:#fff; --text:#111; --muted:#555;
-      --stroke:#e6e6e6; --shadow: 0 1px 0 rgba(0,0,0,0.02);
+    :root{
+      --bg:#f6f7f8; --card:#fff; --text:#111; --muted:#555; --stroke:#e6e6e6;
       --radius:18px;
     }
-    * { box-sizing:border-box; }
-    body {
-      margin:0;
-      font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
-      background:var(--bg);
-      color:var(--text);
+    *{ box-sizing:border-box; }
+    body{ margin:0; font-family:-apple-system,system-ui,Segoe UI,Roboto,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    header{ padding:22px 18px 10px; max-width:980px; margin:0 auto; }
+    h1{ margin:0 0 8px; font-size:34px; letter-spacing:-0.4px; }
+    p{ margin:0; color:var(--muted); line-height:1.35; }
+
+    .wrap{ max-width:980px; margin:0 auto; padding:12px 12px 28px; }
+
+    .toolbar{ display:flex; gap:10px; flex-wrap:wrap; margin:12px 6px 14px; align-items:center; }
+    .search{
+      flex: 1 1 280px;
+      background:#fff; border:1px solid var(--stroke);
+      border-radius:14px; padding:12px 14px; font-size:16px;
     }
-    header { padding:22px 18px 10px; max-width:980px; margin:0 auto; }
-    h1 { margin:0 0 8px; font-size:34px; letter-spacing:-0.4px; }
-    p { margin:0; color:var(--muted); line-height:1.35; }
-
-    .wrap { max-width:980px; margin:0 auto; padding:12px 12px 28px; }
-
-    .panel {
-      background:var(--card);
-      border:1px solid var(--stroke);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding:12px;
-      margin: 10px 6px 12px;
+    .pill{
+      background:#fff; border:1px solid var(--stroke);
+      border-radius:999px; padding:10px 12px; font-size:14px; color:var(--muted);
+      display:flex; gap:8px; align-items:center;
     }
-
-    .toolbar {
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin:12px 6px 14px;
-    }
-
-    .search {
-      flex: 1 1 260px;
-      background:#fff;
-      border:1px solid var(--stroke);
-      border-radius:14px;
-      padding:12px 14px;
-      font-size:16px;
-      outline:none;
-    }
-
-    .btn {
-      appearance:none;
-      border:1px solid var(--stroke);
-      background:#fff;
-      border-radius:14px;
-      padding:10px 12px;
-      font-weight:700;
-      font-size:14px;
+    .btnTop{
+      background:#fff; border:1px solid var(--stroke);
+      border-radius:14px; padding:10px 12px; font-size:14px; font-weight:700;
       cursor:pointer;
     }
-    .btn.primary { background:#111; color:#fff; border-color:#111; }
-    .btn:disabled { opacity:.6; cursor:not-allowed; }
 
-    .pill {
-      background:#fff;
-      border:1px solid var(--stroke);
-      border-radius:999px;
-      padding:10px 12px;
-      font-size:14px;
-      color:var(--muted);
-      display:flex;
-      align-items:center;
-      gap:8px;
-      white-space:nowrap;
-    }
-    .dot {
-      width:10px; height:10px; border-radius:50%;
-      background:#21a366;
-      display:inline-block;
-    }
-
-    .mapwrap {
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:10px;
-    }
-
-    #map {
-      width:100%;
-      height: 320px;
-      border-radius: 14px;
-      border:1px solid var(--stroke);
-      overflow:hidden;
-      background:#fafafa;
-    }
-
-    .hint {
-      color:var(--muted);
-      font-size:13px;
-      line-height:1.35;
-      padding: 0 2px;
-    }
-
-    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
-    @media (min-width:820px){ .grid{ grid-template-columns: 1fr 1fr; } }
-
-    .card {
+    .mapCard{
       background:var(--card);
       border:1px solid var(--stroke);
-      border-radius: var(--radius);
-      padding:14px;
-      box-shadow: var(--shadow);
+      border-radius:var(--radius);
+      padding:10px;
+      margin:0 6px 14px;
+      overflow:hidden;
     }
-    .name { font-size:18px; font-weight:800; margin:0 0 4px; }
-    .meta { font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
-    .tagrow { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
-    .tag { font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid var(--stroke); color:var(--muted); background:#fafafa; }
+    #map{ height:260px; border-radius:14px; overflow:hidden; }
+    .mapHint{ margin:10px 2px 0; color:var(--muted); font-size:13px; }
 
-    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-    a.linkbtn {
-      display:inline-block;
-      text-decoration:none;
-      color:#111;
-      background:#fff;
-      border:1px solid var(--stroke);
-      padding:10px 12px;
-      border-radius:14px;
-      font-weight:800;
-      font-size:14px;
+    .grid{ display:grid; grid-template-columns: 1fr; gap:12px; padding:0 6px; }
+    @media (min-width:720px){ .grid{ grid-template-columns: 1fr 1fr; } }
+
+    .card{
+      background:var(--card); border:1px solid var(--stroke); border-radius:var(--radius);
+      padding:14px; box-shadow: 0 1px 0 rgba(0,0,0,0.02);
     }
-    a.linkbtn.primary { background:#111; color:#fff; border-color:#111; }
+    .name{ font-size:18px; font-weight:800; margin:0 0 4px; }
+    .meta{ font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
+    .tagrow{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
+    .tag{ font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid var(--stroke); color:var(--muted); background:#fafafa; }
 
-    .empty {
-      text-align:center;
-      color:var(--muted);
-      padding: 20px 8px 10px;
+    .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    a.btn{
+      display:inline-block; text-decoration:none; color:#111;
+      background:#fff; border:1px solid var(--stroke);
+      padding:10px 12px; border-radius:14px; font-weight:800; font-size:14px;
     }
+    a.btn.primary{ background:#111; color:#fff; border-color:#111; }
 
-    footer { max-width:980px; margin:0 auto; padding:8px 18px 30px; color:var(--muted); font-size:13px; }
-    .small { font-size:12px; color:var(--muted); }
-    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    footer{ max-width:980px; margin:0 auto; padding:8px 18px 30px; color:var(--muted); font-size:13px; }
+    .small{ font-size:12px; color:var(--muted); }
   </style>
+
+  <!-- Load your data -->
+  <script defer src="./shelters.js"></script>
+
+  <!-- Leaflet JS -->
+  <script
+    defer
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
 </head>
 
 <body>
@@ -170,282 +107,203 @@
 
   <div class="wrap">
     <div class="toolbar">
-      <input id="q" class="search" placeholder="Search (name, address, notes)…" autocomplete="off" />
-      <button id="nearBtn" class="btn" type="button">Near me</button>
-      <button id="resetBtn" class="btn" type="button">Reset</button>
-      <div class="pill" id="count"><span class="dot"></span><span>0 listed</span></div>
+      <input id="q" class="search" placeholder="Search (name, address, notes)..." autocomplete="off" />
+      <button id="nearBtn" class="btnTop" type="button">Near me</button>
+      <button id="resetBtn" class="btnTop" type="button">Reset</button>
+      <div class="pill" id="count"><span style="width:10px;height:10px;border-radius:999px;background:#2bb24c;display:inline-block;"></span><span>0 listed</span></div>
     </div>
 
-    <div class="panel">
-      <div class="mapwrap">
-        <div id="map" aria-label="Map of shelters"></div>
-        <div class="hint" id="mapHint">
-          Tip: Tap a marker to open that place. “Near me” sorts the list and zooms closer.
-        </div>
-      </div>
+    <div class="mapCard">
+      <div id="map"></div>
+      <div class="mapHint">Tip: Tap a marker to open that place. “Near me” sorts the list and zooms closer.</div>
     </div>
 
     <div class="grid" id="list"></div>
-    <div class="empty" id="empty" style="display:none;">No matches. Try a different search.</div>
   </div>
 
   <footer>
     <div class="small">
-      iPhone: Safari → Share → <b>Add to Home Screen</b> to install like an app.
-      If things look “stuck”, refresh once or clear site data (service worker cache).
+      Tip: On iPhone (Safari) → Share → <b>Add to Home Screen</b> to use it like an app.<br/>
+      If something looks “stuck”, clear site data or unregister the Service Worker, then refresh.
     </div>
   </footer>
 
-  <!-- IMPORTANT: load your data FIRST -->
-  <script src="./shelters.js"></script>
+<script>
+  // --- Service worker ---
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => navigator.serviceWorker.register("./service-worker.js"));
+  }
 
-  <!-- Leaflet JS -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-  ></script>
+  // --- Helpers ---
+  const $ = (id) => document.getElementById(id);
+  const enc = (s) => encodeURIComponent(s || "");
+  const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
+  const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
+  const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
 
-  <script>
-    // Register service worker (optional)
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
-      });
-    }
+  function haversineKm(aLat, aLon, bLat, bLon) {
+    const R = 6371;
+    const toRad = (x) => x * Math.PI / 180;
+    const dLat = toRad(bLat - aLat);
+    const dLon = toRad(bLon - aLon);
+    const lat1 = toRad(aLat);
+    const lat2 = toRad(bLat);
+    const s =
+      Math.sin(dLat/2)**2 +
+      Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+    return R * c;
+  }
 
-    // ---- Helpers
-    const $ = (id) => document.getElementById(id);
-    const enc = (s) => encodeURIComponent(s || "");
-    const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
-    const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
-    const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
+  // --- State ---
+  let shelters = Array.isArray(window.SHELTERS) ? window.SHELTERS.slice() : [];
+  let userLoc = null; // {lat, lon}
+  let sortByNear = false;
 
-    // Haversine distance (km)
-    function kmBetween(aLat, aLon, bLat, bLon) {
-      const R = 6371;
-      const toRad = (x) => x * Math.PI / 180;
-      const dLat = toRad(bLat - aLat);
-      const dLon = toRad(bLon - aLon);
-      const lat1 = toRad(aLat);
-      const lat2 = toRad(bLat);
-      const s = Math.sin(dLat/2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * (Math.sin(dLon/2) ** 2);
-      const c = 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
-      return R * c;
-    }
+  // --- Map ---
+  let map, markersLayer;
 
-    // ---- Data load
-    const raw = Array.isArray(window.SHELTERS) ? window.SHELTERS.slice() : [];
-    // If this is empty, shelters.js didn’t load.
-    // (Open DevTools console: you should NOT see 404 for shelters.js)
-    let shelters = raw.slice();
+  function initMap() {
+    // Default center: downtown-ish Vancouver
+    map = L.map("map", { zoomControl: true }).setView([49.2827, -123.1207], 12);
 
-    // ---- UI state
-    let userLoc = null; // {lat, lon}
-    let sortByNear = false;
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
 
-    const $list = $("list");
-    const $q = $("q");
-    const $count = $("count");
-    const $empty = $("empty");
-    const $nearBtn = $("nearBtn");
-    const $resetBtn = $("resetBtn");
+    markersLayer = L.layerGroup().addTo(map);
+  }
 
-    // ---- Map
-    let map = null;
-    let markersLayer = null;
-    let userMarker = null;
-    const markerByName = new Map();
+  function rebuildMarkers(items) {
+    if (!markersLayer) return;
+    markersLayer.clearLayers();
 
-    function initMap() {
-      // Default view: Downtown Vancouver-ish
-      map = L.map("map", { zoomControl: true }).setView([49.2827, -123.1207], 12);
+    const pts = [];
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
-
-      markersLayer = L.layerGroup().addTo(map);
-      rebuildMarkers(shelters);
-    }
-
-    function rebuildMarkers(list) {
-      if (!map || !markersLayer) return;
-      markersLayer.clearLayers();
-      markerByName.clear();
-
-      const pts = [];
-
-      for (const s of list) {
-        if (typeof s.lat !== "number" || typeof s.lon !== "number") continue;
-        const m = L.marker([s.lat, s.lon]).addTo(markersLayer);
-        const title = s.name || "Shelter";
-        const addr = s.address ? `<div style="margin-top:4px;color:#555;font-size:12px;">${s.address}</div>` : "";
-        m.bindPopup(`<b>${title}</b>${addr}`);
-        markerByName.set(title, m);
+    for (const s of items) {
+      if (typeof s.lat === "number" && typeof s.lon === "number") {
+        const m = L.marker([s.lat, s.lon]);
+        const addr = s.address || "";
+        const g = addr ? googleMaps(addr) : "";
+        const a = addr ? appleMaps(addr) : "";
+        m.bindPopup(`
+          <b>${s.name || "Place"}</b><br/>
+          ${addr ? `${addr}<br/>` : ""}
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;">
+            ${s.phone ? `<a href="tel:${fmtPhone(s.phone)}">Call</a>` : ""}
+            ${s.email ? `<a href="mailto:${s.email}">Email</a>` : ""}
+            ${addr ? `<a href="${a}" target="_blank" rel="noopener">Apple Maps</a>` : ""}
+            ${addr ? `<a href="${g}" target="_blank" rel="noopener">Google Maps</a>` : ""}
+          </div>
+        `);
+        m.addTo(markersLayer);
         pts.push([s.lat, s.lon]);
       }
-
-      // Fit bounds if we have points
-      if (pts.length >= 2) {
-        const bounds = L.latLngBounds(pts);
-        map.fitBounds(bounds.pad(0.18));
-      } else if (pts.length === 1) {
-        map.setView(pts[0], 14);
-      }
     }
 
-    function showUserOnMap(lat, lon) {
-      if (!map) return;
-      if (userMarker) map.removeLayer(userMarker);
-      userMarker = L.circleMarker([lat, lon], {
-        radius: 8,
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.5
-      }).addTo(map);
-      userMarker.bindPopup("<b>You are here</b>");
+    if (pts.length) {
+      const bounds = L.latLngBounds(pts);
+      map.fitBounds(bounds.pad(0.15));
     }
+  }
 
-    // ---- Rendering
-    function card(s) {
-      const tel = s.phone ? `tel:${fmtPhone(s.phone)}` : "";
-      const mail = s.email ? `mailto:${s.email}` : "";
-      const dirApple = s.address ? appleMaps(s.address) : "";
-      const dirGoogle = s.address ? googleMaps(s.address) : "";
+  // --- UI rendering ---
+  function card(s) {
+    const tel = s.phone ? `tel:${fmtPhone(s.phone)}` : "";
+    const mail = s.email ? `mailto:${s.email}` : "";
+    const dirApple = s.address ? appleMaps(s.address) : "";
+    const dirGoogle = s.address ? googleMaps(s.address) : "";
+    const tag = s.type || s.kind || "Resource";
 
-      const tags = [s.type].filter(Boolean).map(t => `<span class="tag">${t}</span>`).join("");
-
-      const distLine = (userLoc && typeof s.lat === "number" && typeof s.lon === "number")
-        ? (() => {
-            const km = kmBetween(userLoc.lat, userLoc.lon, s.lat, s.lon);
-            const pretty = km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
-            return `<div style="margin-top:6px;"><b>Distance:</b> ${pretty}</div>`;
-          })()
-        : "";
-
-      return `
-        <div class="card" data-name="${(s.name || "").replace(/"/g, "&quot;")}">
-          <div class="name">${s.name || "—"}</div>
-          <div class="meta">
-            ${s.address ? `<div><b>Address:</b> ${s.address}</div>` : ""}
-            ${s.notes ? `<div style="margin-top:6px;">${s.notes}</div>` : ""}
-            ${distLine}
-          </div>
-          <div class="tagrow">${tags}</div>
-          <div class="btns">
-            ${s.phone ? `<a class="linkbtn primary" href="${tel}">Call</a>` : ``}
-            ${s.email ? `<a class="linkbtn" href="${mail}">Email</a>` : ``}
-            ${s.address ? `<a class="linkbtn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
-            ${s.address ? `<a class="linkbtn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
-            ${typeof s.lat === "number" && typeof s.lon === "number"
-              ? `<button class="btn" type="button" data-zoom="1">Show on map</button>`
-              : ``}
-          </div>
-        </div>
-      `;
-    }
-
-    function filteredList() {
-      const query = ($q.value || "").toLowerCase().trim();
-      let out = shelters.filter(s => {
-        const blob = `${s.name} ${s.type} ${s.address} ${s.phone} ${s.email} ${s.notes}`.toLowerCase();
-        return blob.includes(query);
-      });
-
-      if (sortByNear && userLoc) {
-        out = out.slice().sort((a, b) => {
-          const aOk = typeof a.lat === "number" && typeof a.lon === "number";
-          const bOk = typeof b.lat === "number" && typeof b.lon === "number";
-          if (!aOk && !bOk) return 0;
-          if (!aOk) return 1;
-          if (!bOk) return -1;
-          const da = kmBetween(userLoc.lat, userLoc.lon, a.lat, a.lon);
-          const db = kmBetween(userLoc.lat, userLoc.lon, b.lat, b.lon);
-          return da - db;
-        });
-      }
-
-      return out;
-    }
-
-    function render() {
-      const list = filteredList();
-
-      $list.innerHTML = list.map(card).join("");
-      $empty.style.display = list.length ? "none" : "block";
-      $count.innerHTML = `<span class="dot"></span><span>${list.length} listed</span>`;
-
-      // Update markers to match the filtered list
-      rebuildMarkers(list);
-
-      // Hook up "Show on map" buttons
-      $list.querySelectorAll('button[data-zoom="1"]').forEach(btn => {
-        btn.addEventListener("click", (e) => {
-          const cardEl = e.target.closest(".card");
-          const name = cardEl?.getAttribute("data-name");
-          if (!name || !map) return;
-          const m = markerByName.get(name);
-          if (m) {
-            map.setView(m.getLatLng(), Math.max(map.getZoom(), 15));
-            m.openPopup();
-            document.getElementById("map").scrollIntoView({ behavior: "smooth", block: "center" });
+    return `
+      <div class="card">
+        <div class="name">${s.name || "Unknown"}</div>
+        <div class="meta">
+          ${s.address ? `<div><b>Address:</b> ${s.address}</div>` : ""}
+          ${s.notes ? `<div style="margin-top:6px;">${s.notes}</div>` : ""}
+          ${
+            (userLoc && typeof s.lat === "number" && typeof s.lon === "number")
+              ? `<div style="margin-top:6px;"><b>Distance:</b> ${haversineKm(userLoc.lat, userLoc.lon, s.lat, s.lon).toFixed(1)} km</div>`
+              : ``
           }
-        });
+        </div>
+        <div class="tagrow"><span class="tag">${tag}</span></div>
+        <div class="btns">
+          ${s.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
+          ${s.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
+          ${s.address ? `<a class="btn" href="${dirApple}" target="_blank" rel="noopener">Directions (Apple)</a>` : ``}
+          ${s.address ? `<a class="btn" href="${dirGoogle}" target="_blank" rel="noopener">Directions (Google)</a>` : ``}
+        </div>
+      </div>
+    `;
+  }
+
+  function render() {
+    const q = ($("q").value || "").toLowerCase().trim();
+
+    let items = shelters.filter(s => {
+      const blob = `${s.name||""} ${s.type||s.kind||""} ${s.address||""} ${s.phone||""} ${s.email||""} ${s.notes||""}`.toLowerCase();
+      return blob.includes(q);
+    });
+
+    if (sortByNear && userLoc) {
+      items = items.slice().sort((a, b) => {
+        if (typeof a.lat !== "number" || typeof a.lon !== "number") return 1;
+        if (typeof b.lat !== "number" || typeof b.lon !== "number") return -1;
+        return haversineKm(userLoc.lat, userLoc.lon, a.lat, a.lon) - haversineKm(userLoc.lat, userLoc.lon, b.lat, b.lon);
       });
     }
 
-    // ---- Near me
-    function nearMe() {
-      if (!navigator.geolocation) {
-        alert("Geolocation isn’t available on this device/browser.");
-        return;
-      }
-      $nearBtn.disabled = true;
-      $nearBtn.textContent = "Locating…";
+    $("list").innerHTML = items.map(card).join("");
+    $("count").innerHTML = `<span style="width:10px;height:10px;border-radius:999px;background:#2bb24c;display:inline-block;"></span><span>${items.length} listed</span>`;
 
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          userLoc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
-          sortByNear = true;
+    rebuildMarkers(items);
+  }
 
-          showUserOnMap(userLoc.lat, userLoc.lon);
-          if (map) map.setView([userLoc.lat, userLoc.lon], 13);
-
-          $nearBtn.disabled = false;
-          $nearBtn.textContent = "Near me";
-          render();
-        },
-        (err) => {
-          $nearBtn.disabled = false;
-          $nearBtn.textContent = "Near me";
-          alert("Couldn’t get location. If you’re on iPhone, make sure Safari location is allowed for this site.");
-          console.log(err);
-        },
-        { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
-      );
+  async function setNearMe() {
+    if (!navigator.geolocation) {
+      alert("Geolocation not available in this browser.");
+      return;
     }
 
-    function resetAll() {
-      $q.value = "";
-      userLoc = null;
-      sortByNear = false;
-      if (map && userMarker) {
-        map.removeLayer(userMarker);
-        userMarker = null;
-      }
-      render();
-    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        userLoc = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+        sortByNear = true;
 
-    // ---- Boot
-    initMap();
+        if (map) {
+          map.setView([userLoc.lat, userLoc.lon], 13);
+          L.circleMarker([userLoc.lat, userLoc.lon], { radius: 7 }).addTo(markersLayer).bindPopup("<b>You are here</b>");
+        }
 
-    $q.addEventListener("input", render);
-    $nearBtn.addEventListener("click", nearMe);
-    $resetBtn.addEventListener("click", resetAll);
+        render();
+      },
+      (err) => {
+        alert("Couldn’t get your location (permission denied or unavailable).");
+        console.warn(err);
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 }
+    );
+  }
 
+  function resetAll() {
+    $("q").value = "";
+    sortByNear = false;
+    userLoc = null;
     render();
-  </script>
+  }
+
+  // Boot
+  window.addEventListener("load", () => {
+    // If shelters.js failed to parse, this will be empty:
+    shelters = Array.isArray(window.SHELTERS) ? window.SHELTERS.slice() : [];
+    initMap();
+    $("q").addEventListener("input", render);
+    $("nearBtn").addEventListener("click", setNearMe);
+    $("resetBtn").addEventListener("click", resetAll);
+    render();
+  });
+</script>
 </body>
 </html>
