@@ -1,83 +1,238 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#111111">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <title>Women’s Help – Vancouver</title>
+  <meta name="description" content="Quick contacts, shelters, and support services for women in Vancouver. Search, call, email, and get directions. Works offline once loaded." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#111111">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+
+  <!-- Basic social preview (optional but nice) -->
+  <meta property="og:title" content="Women’s Help – Vancouver">
+  <meta property="og:description" content="Quick contacts + directions. Search shelters and support services. Works offline once loaded.">
+  <meta property="og:type" content="website">
+
   <style>
-    :root { --bg:#f6f7f8; --card:#fff; --text:#111; --muted:#555; --stroke:#e6e6e6; }
-    body { margin:0; font-family: -apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif; background:var(--bg); color:var(--text); }
-    header { padding:22px 18px 10px; max-width:900px; margin:0 auto; }
-    h1 { margin:0 0 8px; font-size:34px; letter-spacing:-0.4px; }
-    p { margin:0; color:var(--muted); line-height:1.35; }
-    .wrap { max-width:900px; margin:0 auto; padding:12px 12px 28px; }
-    .toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:12px 6px 14px; }
-    .search {
-      flex: 1 1 240px;
-      background:#fff; border:1px solid var(--stroke);
-      border-radius:14px; padding:12px 14px; font-size:16px;
+    :root{
+      --bg:#f6f7f8;
+      --card:#ffffff;
+      --text:#111111;
+      --muted:#555555;
+      --stroke:#e6e6e6;
+      --shadow: 0 1px 0 rgba(0,0,0,0.02);
+      --radius:18px;
+      --radius2:14px;
+      --max: 980px;
     }
-    .pill {
-      background:#fff; border:1px solid var(--stroke);
-      border-radius:999px; padding:10px 12px; font-size:14px; color:var(--muted);
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:-apple-system, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
     }
-    .grid { display:grid; grid-template-columns: 1fr; gap:12px; }
-    @media (min-width:720px){ .grid{ grid-template-columns: 1fr 1fr; } }
-    .card {
-      background:var(--card); border:1px solid var(--stroke); border-radius:18px;
-      padding:14px; box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+    header{
+      padding:22px 18px 10px;
+      max-width:var(--max);
+      margin:0 auto;
     }
-    .name { font-size:18px; font-weight:700; margin:0 0 4px; }
-    .meta { font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
-    .btns { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-    a.btn {
-      display:inline-block; text-decoration:none; color:#111;
-      background:#fff; border:1px solid var(--stroke);
-      padding:10px 12px; border-radius:14px; font-weight:600; font-size:14px;
+    h1{
+      margin:0 0 8px;
+      font-size:34px;
+      letter-spacing:-0.4px;
+      line-height:1.05;
     }
-    a.btn.primary { background:#111; color:#fff; border-color:#111; }
-    .tagrow { display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
-    .tag { font-size:12px; padding:6px 8px; border-radius:999px; border:1px solid var(--stroke); color:var(--muted); background:#fafafa; }
-    footer { max-width:900px; margin:0 auto; padding:8px 18px 30px; color:var(--muted); font-size:13px; }
-    .small { font-size:12px; color:var(--muted); }
+    p{ margin:0; color:var(--muted); line-height:1.35; }
+
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:12px 12px 28px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:12px 6px 14px;
+      align-items:center;
+    }
+
+    .search{
+      flex: 1 1 260px;
+      background:#fff;
+      border:1px solid var(--stroke);
+      border-radius:var(--radius2);
+      padding:12px 14px;
+      font-size:16px;
+      outline:none;
+    }
+
+    .pill{
+      background:#fff;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:14px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .btnSmall{
+      appearance:none;
+      border:1px solid var(--stroke);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:14px;
+      font-weight:600;
+      color:var(--text);
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .btnSmall.primary{
+      background:#111;
+      border-color:#111;
+      color:#fff;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+    }
+    @media (min-width:720px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .name{ font-size:18px; font-weight:800; margin:0 0 4px; }
+    .meta{ font-size:14px; color:var(--muted); margin:0 0 10px; line-height:1.35; }
+
+    .tagrow{ display:flex; gap:8px; flex-wrap:wrap; margin:8px 0 0; }
+    .tag{
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      color:var(--muted);
+      background:#fafafa;
+    }
+
+    .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    a.btn{
+      display:inline-block;
+      text-decoration:none;
+      color:#111;
+      background:#fff;
+      border:1px solid var(--stroke);
+      padding:10px 12px;
+      border-radius:var(--radius2);
+      font-weight:700;
+      font-size:14px;
+    }
+    a.btn.primary{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    .mutedLine{
+      font-size:12px;
+      color:var(--muted);
+      margin:6px 6px 0;
+    }
+
+    footer{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:8px 18px 30px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    /* Install / offline banners */
+    #installBar{ display:none; margin: 0 6px 12px; }
+    #iosTip{ display:none; margin: 0 6px 12px; }
+    #offlineBar{ display:none; margin: 0 6px 12px; }
+    .bannerTitle{ font-weight:800; margin:0 0 6px; }
   </style>
 </head>
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js");
-    });
-  }
-</script>
 
 <body>
   <header>
     <h1>Women’s Help – Vancouver</h1>
-    <p>Quick contacts + directions. Tap “Directions” for Apple Maps (iPhone) or Google Maps.</p>
+    <p>Quick contacts + directions. Search by name, address, or notes. Works offline once opened.</p>
   </header>
 
   <div class="wrap">
+    <!-- Offline banner -->
+    <div id="offlineBar" class="card">
+      <div class="bannerTitle">You’re offline</div>
+      <div class="meta" style="margin:0;">
+        Search and contacts still work. Directions may require a connection.
+      </div>
+    </div>
+
+    <!-- Install banner (Android/Chrome) -->
+    <div id="installBar" class="card">
+      <div class="bannerTitle">Install this as an app</div>
+      <div class="meta" style="margin-bottom:10px;">
+        Adds an icon to your home screen and opens full-screen.
+      </div>
+      <div class="btns">
+        <button id="installBtn" class="btnSmall primary" type="button">Install</button>
+        <button id="dismissInstall" class="btnSmall" type="button">Not now</button>
+      </div>
+    </div>
+
+    <!-- iOS tip -->
+    <div id="iosTip" class="mutedLine">
+      iPhone: Share → <b>Add to Home Screen</b> to install.
+    </div>
+
     <div class="toolbar">
       <input id="q" class="search" placeholder="Search (name, address, notes)…" autocomplete="off" />
-      <div class="pill" id="count"></div>
+      <button id="nearMe" class="btnSmall" type="button">Near me</button>
+      <button id="resetSort" class="btnSmall" type="button" style="display:none;">Reset</button>
+      <div class="pill" id="count">0 listed</div>
     </div>
 
     <div class="grid" id="list"></div>
   </div>
 
   <footer>
-    <div class="small">
-      Tip: In Safari → Share → <b>Add to Home Screen</b> to make this behave like an “app”.
+    <div class="mutedLine">
+      Emergency: call 911. This page is an information list, not a guarantee of space/availability.
     </div>
   </footer>
 
 <script>
-  // --- EDIT THIS LIST ANYTIME ---
+  // -----------------------------
+  // DATA (edit anytime)
+  // Tip: Add lat/lng later for best "Near me" accuracy.
+  // -----------------------------
   const places = [
     {
       name: "SisterShelter (Atira)",
@@ -177,14 +332,54 @@
     }
   ];
 
+  // -----------------------------
+  // HELPERS
+  // -----------------------------
   const $list = document.getElementById("list");
   const $q = document.getElementById("q");
   const $count = document.getElementById("count");
+  const $nearMe = document.getElementById("nearMe");
+  const $resetSort = document.getElementById("resetSort");
 
   const enc = (s) => encodeURIComponent(s || "");
   const fmtPhone = (p) => (p || "").replace(/[^\d+]/g, "");
   const appleMaps = (addr) => `https://maps.apple.com/?q=${enc(addr)}`;
   const googleMaps = (addr) => `https://www.google.com/maps/search/?api=1&query=${enc(addr)}`;
+
+  const originalOrder = places.map((p, i) => ({ ...p, __i: i }));
+  let working = originalOrder.slice();
+  let lastCoords = null;
+
+  function isIOS(){
+    return /iphone|ipad|ipod/i.test(navigator.userAgent);
+  }
+
+  function metersToKm(m){
+    const km = m / 1000;
+    if (km < 1) return `${Math.round(km * 10) / 10} km`;
+    return `${Math.round(km * 10) / 10} km`;
+  }
+
+  // Haversine distance (meters)
+  function haversine(lat1, lon1, lat2, lon2){
+    const R = 6371000;
+    const toRad = (x) => x * Math.PI / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  // Optional: if you later add p.lat / p.lng, distances will show.
+  function distanceLabel(p){
+    if (!lastCoords || typeof p.lat !== "number" || typeof p.lng !== "number") return "";
+    const m = haversine(lastCoords.lat, lastCoords.lng, p.lat, p.lng);
+    return metersToKm(m);
+  }
 
   function card(p){
     const tel = p.phone ? `tel:${fmtPhone(p.phone)}` : "";
@@ -193,15 +388,24 @@
     const dirGoogle = p.address ? googleMaps(p.address) : "";
 
     const tags = [p.kind].filter(Boolean).map(t => `<span class="tag">${t}</span>`).join("");
+    const dist = distanceLabel(p);
 
     return `
       <div class="card">
-        <div class="name">${p.name}</div>
+        <div class="row">
+          <div>
+            <div class="name">${p.name}</div>
+          </div>
+          ${dist ? `<div class="tag" title="Approx distance">${dist}</div>` : ``}
+        </div>
+
         <div class="meta">
           ${p.address ? `<div><b>Address:</b> ${p.address}</div>` : ""}
           ${p.notes ? `<div style="margin-top:6px;">${p.notes}</div>` : ""}
         </div>
+
         <div class="tagrow">${tags}</div>
+
         <div class="btns">
           ${p.phone ? `<a class="btn primary" href="${tel}">Call</a>` : ``}
           ${p.email ? `<a class="btn" href="${mail}">Email</a>` : ``}
@@ -212,18 +416,126 @@
     `;
   }
 
-  function render(){
+  function filterList(items){
     const query = ($q.value || "").toLowerCase().trim();
-    const filtered = places.filter(p => {
+    if (!query) return items;
+    return items.filter(p => {
       const blob = `${p.name} ${p.kind} ${p.address} ${p.phone} ${p.email} ${p.notes}`.toLowerCase();
       return blob.includes(query);
     });
+  }
 
+  function render(){
+    const filtered = filterList(working);
     $list.innerHTML = filtered.map(card).join("");
     $count.textContent = `${filtered.length} listed`;
   }
 
   $q.addEventListener("input", render);
+
+  // -----------------------------
+  // Near Me (works best if places have lat/lng)
+  // Without lat/lng, we still request location but can't sort accurately.
+  // -----------------------------
+  $nearMe.addEventListener("click", () => {
+    if (!("geolocation" in navigator)) {
+      alert("Location is not available on this device/browser.");
+      return;
+    }
+
+    $nearMe.disabled = true;
+    $nearMe.textContent = "Locating…";
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        lastCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+
+        const hasCoords = working.some(p => typeof p.lat === "number" && typeof p.lng === "number");
+        if (hasCoords) {
+          working = working
+            .slice()
+            .sort((a, b) => (haversine(lastCoords.lat, lastCoords.lng, a.lat, a.lng) - haversine(lastCoords.lat, lastCoords.lng, b.lat, b.lng)));
+          $resetSort.style.display = "inline-block";
+        } else {
+          alert("Near me is ready, but this list doesn’t have coordinates yet. If you want, we can add lat/lng to each place so it can sort by distance.");
+        }
+
+        $nearMe.disabled = false;
+        $nearMe.textContent = "Near me";
+        render();
+      },
+      (err) => {
+        $nearMe.disabled = false;
+        $nearMe.textContent = "Near me";
+        alert("Couldn’t get location. You may need to allow location permissions for this site.");
+      },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+    );
+  });
+
+  $resetSort.addEventListener("click", () => {
+    working = originalOrder.slice();
+    lastCoords = null;
+    $resetSort.style.display = "none";
+    render();
+  });
+
+  // -----------------------------
+  // Offline indicator
+  // -----------------------------
+  const offlineBar = document.getElementById("offlineBar");
+  function updateOnlineStatus(){
+    const online = navigator.onLine;
+    offlineBar.style.display = online ? "none" : "block";
+  }
+  window.addEventListener("online", updateOnlineStatus);
+  window.addEventListener("offline", updateOnlineStatus);
+  updateOnlineStatus();
+
+  // -----------------------------
+  // Install UX (Android) + iOS tip
+  // -----------------------------
+  let deferredPrompt = null;
+
+  const installBar = document.getElementById("installBar");
+  const installBtn = document.getElementById("installBtn");
+  const dismissInstall = document.getElementById("dismissInstall");
+  const iosTip = document.getElementById("iosTip");
+
+  const inStandalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
+
+  if (isIOS() && !inStandalone) iosTip.style.display = "block";
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!inStandalone) installBar.style.display = "block";
+  });
+
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    installBar.style.display = "none";
+  });
+
+  dismissInstall.addEventListener("click", () => {
+    installBar.style.display = "none";
+  });
+
+  // -----------------------------
+  // Service Worker registration (must be inside <body> / end of doc)
+  // -----------------------------
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+    });
+  }
+
+  // First render
   render();
 </script>
 </body>
