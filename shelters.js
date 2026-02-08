@@ -15,7 +15,7 @@ window.SHELTERS = [
     name: "The Sisterhood (Atira)",
     type: "Shelter",
     notes: "Low-barrier shelter for self-identified women. Open 24/7. Meals/snacks; storage available; wheelchair accessible.",
-    address: "342 Alexander Street, Vancouver, BC V6A 1C3"
+    address: "342 Alexander Street, Vancouver, BC V6A 1C3",
     lat: 49.28396924513424,
     lon: -123.09652674828338,
   },
@@ -32,7 +32,7 @@ window.SHELTERS = [
     name: "First United Shelter Program (Safe Shelter)",
     type: "Shelter",
     notes: "Year-round, low-barrier, 24-hour emergency shelter (adults 19+). Intake 24h.",
-    address: "467 Alexander Street, Vancouver, BC V6A 1C6"
+    address: "467 Alexander Street, Vancouver, BC V6A 1C6",
     lat: 49.28432527884914, 
     lon: -123.09435604431644,
   },
